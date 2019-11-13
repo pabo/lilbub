@@ -6,20 +6,18 @@ const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET
 });
 
-
-
 // All the room in the world for your code
+
 app.event('app_home_opened', async ({ event, context }) => {
-  console.log('here');
   try {
     /* view.publish is the method that your app uses to push a view to the Home tab */
-    const result = await app.views.publish({
+    const result = await app.client.views.publish({
 
       /* retrieves your xoxb token from context */
       token: context.botToken,
 
       /* the user that opened your app's App Home */
-      user: event.user,
+      user_id: event.user,
 
       /* the view payload that will appear in the App Home*/
       view: {
