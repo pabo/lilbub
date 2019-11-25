@@ -48,20 +48,18 @@ app.command('/helloworld', async ({ ack, payload, context }) => {
 
 // Listen for a button invocation with action_id `button_abc`
 // You must set up a Request URL under Interactive Components on your app configuration page
-app.action('button_abc', async ({ ack, payload, action, context }) => {
+app.action('button_abc', async ({ ack, body, context }) => {
   // Acknowledge the button request
   ack();
-  
-  console.log(payload.channel);
 
   try {
     // Update the message
     const result = await app.client.chat.update({
       token: context.botToken,
       // ts of message to update
-      ts: action.action_ts,
+      ts: body.message.ts,
       // Channel of message
-      channel: payload.channel,
+      channel: body.channel.id,
       blocks: [
         {
           type: 'section',
