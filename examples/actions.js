@@ -9,12 +9,12 @@ const app = new App({
 });
 
 // Listen for a slash command invocation
-app.command('/helloworld', ({ ack, payload, context }) => {
+app.command('/helloworld', async ({ ack, payload, context }) => {
   // Acknowledge the command request
   ack();
 
   try {
-    const result = app.client.chat.postMessage({
+    const result = await app.client.chat.postMessage({
       token: context.botToken,
       // Channel to send message to
       channel: payload.channel_id,
@@ -46,19 +46,22 @@ app.command('/helloworld', ({ ack, payload, context }) => {
   }
 });
 
-// Listen for a button invocation with action_id `button_abc` (assume it's inside of a modal)
-app.action('button_abc', ({ ack, payload, action, context }) => {
-  console.log('here');
+// Listen for a button invocation with action_id `button_abc`
+// You must set up a Request URL under Interactive Components on your app configuration page
+app.action('button_abc', async ({ ack, payload, action, context }) => {
   // Acknowledge the button request
   ack();
+  
+  console.log(payload.channel);
 
   try {
     // Update the message
-    const result = app.client.chat.update({
+    const result = await app.client.chat.update({
+      token: context.botToken,
       // ts of message to update
       ts: action.action_ts,
       // Channel of message
-      channel: payload.channel.id,
+      channel: payload.channel,
       blocks: [
         {
           type: 'section',

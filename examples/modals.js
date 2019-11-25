@@ -9,12 +9,12 @@ const app = new App({
 });
 
 // Listen for a slash command invocation
-app.command('/ticket', ({ ack, payload, context }) => {
+app.command('/helloworld', async ({ ack, payload, context }) => {
   // Acknowledge the command request
   ack();
 
   try {
-    const result = app.client.views.open({
+    const result = await app.client.views.open({
       token: context.botToken,
       // Pass a valid trigger_id within 3 seconds of receiving it
       trigger_id: payload.trigger_id,
@@ -71,12 +71,13 @@ app.command('/ticket', ({ ack, payload, context }) => {
 });
 
 // Listen for a button invocation with action_id `button_abc` (assume it's inside of a modal)
-app.action('button_abc', ({ ack, body, context }) => {
+// You must set up a Request URL under Interactive Components on your app configuration page
+app.action('button_abc', async ({ ack, body, context }) => {
   // Acknowledge the button request
   ack();
 
   try {
-    const result = app.client.views.update({
+    const result = await app.client.views.update({
       type: 'modal',
       token: context.botToken,
       // Pass the view_id
