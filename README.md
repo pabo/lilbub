@@ -1,27 +1,22 @@
-Welcome to Glitch
+Bolt app template
 =================
 
-Click `Show` in the header to see your app live. Updates to your code will instantly deploy and update live.
+[Bolt](https://slack.dev/bolt) is our framework that lets you build JavaScript-based Slack apps in a flash.
 
-**Glitch** is the friendly community where you'll build the app of your dreams. Glitch lets you instantly create, remix, edit, and host an app, bot or site, and you can invite collaborators or helpers to simultaneously edit code with you.
-
-Find out more [about Glitch](https://glitch.com/about).
-
+This project is a simple app template to make it easy to create your first Bolt app. Read our [Getting Started with Bolt](https://api.slack.com/start/building/bolt) guide for a more in-depth tutorial
 
 Your Project
 ------------
 
-On the front-end,
-- edit `public/client.js`, `public/style.css` and `views/index.html`
-- drag in `assets`, like images or music, to add them to your project
-
-On the back-end,
-- your app starts at `server.js`
-- add frameworks and packages in `package.json`
-- safely store app secrets in `.env` (nobody can see this but you and people you invite)
+- `app.js` contains the primary Bolt app. It imports the Bolt package (`@slack/bolt`) and starts the Bolt app's server. It's where you'll add your app's listeners.
+- `.env` is where you'll put your Slack app's authorization token and signing secret.
+- The `examples/` folder contains a couple of other sample apps that you can peruse to your liking. They show off a few platform features that your app may want to use.
 
 
-Made by [Glitch](https://glitch.com/)
+Read the [Getting Started guide](https://api.slack.com/start/building/bolt)
+-------------------
+
+Read the [Bolt documentation](https://slack.dev/bolt)
 -------------------
 
 \ ゜o゜)ノ
