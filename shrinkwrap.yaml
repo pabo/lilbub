@@ -1,13 +1,13 @@
 dependencies:
-  '@slack/bolt': 1.4.1
+  '@slack/bolt': 1.6.0
 packages:
-  /@slack/bolt/1.4.1:
+  /@slack/bolt/1.6.0:
     dependencies:
       '@slack/logger': 2.0.0
-      '@slack/types': 1.2.1
-      '@slack/web-api': 5.4.0
+      '@slack/types': 1.3.0
+      '@slack/web-api': 5.7.0
       '@types/express': 4.17.2
-      '@types/node': 12.12.7
+      '@types/node': 13.7.1
       axios: 0.18.1
       express: 4.17.1
       please-upgrade-node: 3.2.0
@@ -18,29 +18,29 @@ packages:
       node: '>=10.13.0'
       npm: '>=6.4.1'
     resolution:
-      integrity: sha512-vrk9MA8AvfF2fZnJ8z3EhJj7Ulx1G8Bl2OQGkSV9Z3EEff4eN5tqOK21H6696eYsDMK2MLG7fQ9eLKfA17MC9A==
+      integrity: sha512-BfXZMZDwNOIESmCIvnj7Srpx0IRiLuNtVDDBOso1YAdFCfuANABj/11+Q0/BegHYWZMM8K+iYqMCr7WNhJV8LQ==
   /@slack/logger/2.0.0:
     dependencies:
-      '@types/node': 12.12.7
+      '@types/node': 13.7.1
     dev: false
     engines:
       node: '>= 8.9.0'
       npm: '>= 5.5.1'
     resolution:
       integrity: sha512-OkIJpiU2fz6HOJujhlhfIGrc8hB4ibqtf7nnbJQDerG0BqwZCfmgtK5sWzZ0TkXVRBKD5MpLrTmCYyMxoMCgPw==
-  /@slack/types/1.2.1:
+  /@slack/types/1.3.0:
     dev: false
     engines:
       node: '>= 8.9.0'
       npm: '>= 5.5.1'
     resolution:
-      integrity: sha512-NyGh7MibW+a0OHkwwOPlv63hC639dzQdkFy4dj0tl4sAdZR4OBaE/OhXixKhCzcT3kJsPXaQmvkUN7sqSf52iA==
-  /@slack/web-api/5.4.0:
+      integrity: sha512-3AjHsDJjJKT3q0hQzFHQN7piYIh99LuN7Po56W/R6P/uscqZqwS5xm1U1cTYGIzk8fmsuW7TvWVg0W85hKY/MQ==
+  /@slack/web-api/5.7.0:
     dependencies:
       '@slack/logger': 2.0.0
-      '@slack/types': 1.2.1
+      '@slack/types': 1.3.0
       '@types/is-stream': 1.1.0
-      '@types/node': 12.12.7
+      '@types/node': 13.7.1
       '@types/p-queue': 2.3.2
       axios: 0.18.1
       eventemitter3: 3.1.2
@@ -53,38 +53,38 @@ packages:
       node: '>= 8.9.0'
       npm: '>= 5.5.1'
     resolution:
-      integrity: sha512-iCP7tED6pmGSWz0ZKjZPPpgSOjphmsgo+VMdqaLLnb8eRggsjswKJDruHBtoWENLVySq05qWFFeYtGG36Xv6RQ==
-  /@types/body-parser/1.17.1:
+      integrity: sha512-n3c2S5+fvRJV/FYhdZXPuMrRhnEdF5yPhSXK9ph4xJezNzMbb4OWymrMz7+XVf4qOz30HxN9A6ktV98stOBrhw==
+  /@types/body-parser/1.19.0:
     dependencies:
-      '@types/connect': 3.4.32
-      '@types/node': 12.12.7
+      '@types/connect': 3.4.33
+      '@types/node': 13.7.1
     dev: false
     resolution:
-      integrity: sha512-RoX2EZjMiFMjZh9lmYrwgoP9RTpAjSHiJxdp4oidAQVO02T7HER3xj9UKue5534ULWeqVEkujhWcyvUce+d68w==
-  /@types/connect/3.4.32:
+      integrity: sha512-W98JrE0j2K78swW4ukqMleo8R7h/pFETjM2DQ90MF6XK2i4LO4W3gQ71Lt4w3bfm2EvVSyWHplECvB5sK22yFQ==
+  /@types/connect/3.4.33:
     dependencies:
-      '@types/node': 12.12.7
+      '@types/node': 13.7.1
     dev: false
     resolution:
-      integrity: sha512-4r8qa0quOvh7lGD0pre62CAb1oni1OO6ecJLGCezTmhQ8Fz50Arx9RUszryR8KlgK6avuSXvviL6yWyViQABOg==
-  /@types/express-serve-static-core/4.16.11:
+      integrity: sha512-2+FrkXY4zllzTNfJth7jOqEHC+enpLeGslEhpnTAkg21GkRrWV4SsAtqchtT4YS9/nODBU2/ZfsBY2X4J/dX7A==
+  /@types/express-serve-static-core/4.17.2:
     dependencies:
-      '@types/node': 12.12.7
+      '@types/node': 13.7.1
       '@types/range-parser': 1.2.3
     dev: false
     resolution:
-      integrity: sha512-K8d2M5t3tBQimkyaYTXxtHYyoJPUEhy2/omVRnTAKw5FEdT+Ft6lTaTOpoJdHeG+mIwQXXtqiTcYZ6IR8LTzjQ==
+      integrity: sha512-El9yMpctM6tORDAiBwZVLMcxoTMcqqRO9dVyYcn7ycLWbvR8klrDn8CAOwRfZujZtWD7yS/mshTdz43jMOejbg==
   /@types/express/4.17.2:
     dependencies:
-      '@types/body-parser': 1.17.1
-      '@types/express-serve-static-core': 4.16.11
+      '@types/body-parser': 1.19.0
+      '@types/express-serve-static-core': 4.17.2
       '@types/serve-static': 1.13.3
     dev: false
     resolution:
       integrity: sha512-5mHFNyavtLoJmnusB8OKJ5bshSzw+qkMIBAobLrIM48HJvunFva9mOa6aBwh64lBFyNwBbs0xiEFuj4eU/NjCA==
   /@types/is-stream/1.1.0:
     dependencies:
-      '@types/node': 12.12.7
+      '@types/node': 13.7.1
     dev: false
     resolution:
       integrity: sha512-jkZatu4QVbR60mpIzjINmtS1ZF4a/FqdTUTBeQDVOQ2PYyidtwFKr0B5G6ERukKwliq+7mIXvxyppwzG5EgRYg==
@@ -92,10 +92,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-FwI9gX75FgVBJ7ywgnq/P7tw+/o1GUbtP0KzbtusLigAOgIgNISRK0ZPl4qertvXSIE8YbsVJueQ90cDt9YYyw==
-  /@types/node/12.12.7:
+  /@types/node/13.7.1:
     dev: false
     resolution:
-      integrity: sha512-E6Zn0rffhgd130zbCbAr/JdXfXkoOUFAKNs/rF8qnafSJ8KYaA/j3oz7dcwal+lYjLA7xvdd5J4wdYpCTlP8+w==
+      integrity: sha512-Zq8gcQGmn4txQEJeiXo/KiLpon8TzAl0kmKH4zdWctPj05nWwp1ClMdAVEloqrQKfaC48PNLdgN/aVaLqUrluA==
   /@types/p-queue/2.3.2:
     dev: false
     resolution:
@@ -110,14 +110,14 @@ packages:
       integrity: sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==
   /@types/serve-static/1.13.3:
     dependencies:
-      '@types/express-serve-static-core': 4.16.11
+      '@types/express-serve-static-core': 4.17.2
       '@types/mime': 2.0.1
     dev: false
     resolution:
       integrity: sha512-oprSwp094zOglVrXdlo/4bAHtKTAxX6VT8FOZlBKrmyLbNvE1zxZyJ6yikMVtHIvwP45+ZQGJn+FdXGKTozq0g==
   /accepts/1.3.7:
     dependencies:
-      mime-types: 2.1.24
+      mime-types: 2.1.26
       negotiator: 0.6.2
     dev: false
     engines:
@@ -309,7 +309,7 @@ packages:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
-      mime-types: 2.1.24
+      mime-types: 2.1.26
     dev: false
     engines:
       node: '>= 0.12'
@@ -401,20 +401,20 @@ packages:
       node: '>= 0.6'
     resolution:
       integrity: sha1-VSmk1nZUE07cxSZmVoNbD4Ua/O4=
-  /mime-db/1.40.0:
+  /mime-db/1.43.0:
     dev: false
     engines:
       node: '>= 0.6'
     resolution:
-      integrity: sha512-jYdeOMPy9vnxEqFRRo6ZvTZ8d9oPb+k18PKoYNYUe2stVEBPPwsln/qWzdbmaIvnhZ9v2P+CuecK+fpUfsV2mA==
-  /mime-types/2.1.24:
+      integrity: sha512-+5dsGEEovYbT8UY9yD7eE4XTc4UwJ1jBYlgaQQF38ENsKR3wj/8q8RFZrF9WIZpB2V1ArTVFUva8sAul1NzRzQ==
+  /mime-types/2.1.26:
     dependencies:
-      mime-db: 1.40.0
+      mime-db: 1.43.0
     dev: false
     engines:
       node: '>= 0.6'
     resolution:
-      integrity: sha512-WaFHS3MCl5fapm3oLxU4eYDw77IQM2ACcxQ9RIxfaC3ooc6PFuBMGZZsYpvoXS5D5QTWPieo1jjLdAm3TBP3cQ==
+      integrity: sha512-01paPWYgLrkqAyrlDorC1uDwl2p3qZT7yl806vW7DvDoxwXi46jsjFbg+WdwotBIk6/MbEhO/dh5aZ5sNj/dWQ==
   /mime/1.6.0:
     dev: false
     engines:
@@ -592,7 +592,7 @@ packages:
   /type-is/1.6.18:
     dependencies:
       media-typer: 0.3.0
-      mime-types: 2.1.24
+      mime-types: 2.1.26
     dev: false
     engines:
       node: '>= 0.6'
@@ -620,4 +620,4 @@ registry: 'https://registry.npmjs.org/'
 shrinkwrapMinorVersion: 9
 shrinkwrapVersion: 3
 specifiers:
-  '@slack/bolt': ^1.4.0
+  '@slack/bolt': ^1.6.0
