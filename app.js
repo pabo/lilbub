@@ -8,7 +8,7 @@ const app = new App({
 
 
 // Slackbot++
-const entries = [
+const respondToPattern = [
     {
         pattern: /ur[au]gu?ay/i,
         response: "no, you're a gay",
@@ -21,20 +21,29 @@ const entries = [
     },
 ];
 
-const entries2 = [
+const respondToUserInChannel = [
     {
-        channel: 'C03RTAMR2L', // #chan-gets-
-        response: "no, you're a gay",
-        perchance: 100,
-    },
-    {
-        pattern: /gay/i,
-        response: "I don't know how to tell my parents that I'm gay",
-        perchance: 1,
+        channelMatch: 'C03RTAMR2L', // #chan-gets-a-job
+        userMatch: 'U0136UH7V3J', // @chan
+        response: "get a job",
+        perchance: 5,
     },
 ];
 
-for (const entry of entries) {
+const emojiReponses = [
+  {
+    pattern: /gay/,
+    emojis: [
+      "gayseal",
+      "le-gay",
+      "gaycurious",
+      "fabulously-gay",
+      "erik-pretty"
+    ]
+  }
+]
+
+for (const entry of respondToPattern) {
   const {pattern, response, perchance} = entry;
   app.message(pattern, async ({ message, say }) => {
     
@@ -81,7 +90,7 @@ const gayEmojis = [
 ];
 
 app.event('message', async ({ event, client, context }) => {
-  console.log("event", event);
+  // console.log("event", event);
   // console.log("client", client);
   // console.log("context", context);
   
@@ -93,29 +102,38 @@ app.event('message', async ({ event, client, context }) => {
   } = event;
   
   
-  // gay emojis
-  if (event && event.text && event.text.match(/gay/)) {
-    await client.reactions.add({
-      name: gayEmojis[Math.floor(Math.random()*gayEmojis.length)],
-      timestamp: ts,
-      channel, channel
-    })
-  }
   
-  // #chan-gets-a-job, @chan
-  if (channel === 'C03RTAMR2L' && user === 'U0136UH7V3J') {
-    const d100roll = Math.random() * 100; 
+  for (const entry of emojiReponses) {
+    const {pattern, emojis} = entry;
     
-    console.log(`d100roll was ${d100roll}`);
-    
-    if (d100roll <= 5) {
-      client.chat.postMessage({
-        channel,
-        text: "get a job"
+    if (event && event.text && event.text.match(pattern)) {
+      await client.reactions.add({
+        name: emojis[Math.floor(Math.random()*emojis.length)],
+        timestamp: ts,
+        channel, channel
       })
-    } 
+    }  
   }
+
   
+  // per user/channel  
+  for (const entry of respondToUserInChannel) {
+    const {channelMatch, userMatch, response, perchance} = entry;
+  
+
+    if (user === userMatch && channel && channelMatch) {
+      const d100roll = Math.random() * 100; 
+      console.log(`d100roll for user ${user} channel ${channel} was ${d100roll}`);
+
+      if (d100roll <= perchance) {
+        client.chat.postMessage({
+          channel,
+          text: response
+        })
+      }
+    }
+  }
+
 });
 
 
