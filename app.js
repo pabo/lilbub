@@ -1,6 +1,18 @@
 // Require the Bolt package (github.com/slackapi/bolt)
 const { App } = require("@slack/bolt");
 
+const users = {
+  chan: 'U0136UH7V3J',
+  hanam: 'U012MRK5RJR',
+  brett: 'U012FAHGTB7',
+}
+
+const channels = {
+  'testing-new-channel': 'C03TPEWN2MC',
+  'tv-and-movies-no-hanams-allowed': 'C03TS27AN2H',
+  'lil-bub-dev': 'C03TVR0JDC3'
+}
+
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET
@@ -41,6 +53,14 @@ const emojiReponses = [
       "erik-pretty"
     ]
   }
+];
+
+
+const kickOnJoin = [
+  {
+    user: users.chan,
+    channel: 'C03TS27AN2H'
+  }
 ]
 
 for (const entry of respondToPattern) {
@@ -64,16 +84,26 @@ app.event('member_joined_channel', async ({ event, client, context }) => {
     channel
   } = event;
   
-  // @hanam, #tv-and-movies-no-hanams-allowed
-  if (channel === 'C03TS27AN2H' && user === 'U012MRK5RJR') {
+  for (const entry of kickOnJoin) {
+    const {user, channel} = entry;
+    
+      if (channel === channels['tv-and-movies-no-hanams-allowed'] && user === users.hanam) {
     client.conversations.kick({
       channel,
       user
     });
   }
 
-  // @brett, #testing-new-channel
-  if (channel === 'C03TPEWN2MC' && user === 'U012FAHGTB7') {
+  }
+  
+  if (channel === channels['tv-and-movies-no-hanams-allowed'] && user === users.hanam) {
+    client.conversations.kick({
+      channel,
+      user
+    });
+  }
+
+  if (channel === channels['testing-new-channel'] && user === users.brett) {
     client.conversations.kick({
       channel,
       user
