@@ -8,13 +8,33 @@ const app = new App({
 
 
 
-// All the room in the world for your code
-app.event('message.channels', async ({ event, client, context }) => {
-  console.log("event", event);
-  console.log("client", client);
-  console.log("context", context);
+//All the room in the world for your code
+app.event('message', async ({ event, client, context }) => {
+  // console.log("event", event);
+  // console.log("client", client);
+  // console.log("context", context);
+  
+  const {
+    ts,
+    message,
+    channel
+  } = event;
+  
+  if (event.text.match(/gay/)) {
+    await client.reactions.add({
+      name: 'gayseal',
+      timestamp: ts,
+      channel, channel
+    })
+  }
 });
 
+// app.message(/gay/, async ({ message, say }) => {
+//   // await say(`No, <@${message.user}> is gay`);
+//   await app.reactions.add({
+//     name: 'gayseal'
+//   })
+// });
 
 
 app.event('app_home_opened', async ({ event, client, context }) => {
