@@ -25,8 +25,8 @@ for (const entry of entries) {
   const {pattern, response, percentChance} = entry;
   app.message(pattern, async ({ message, say }) => {
     const d100roll = Math.random() * 100; 
-    console.log("d100roll was", d100roll);
-    if (d100roll < percentChance) {    
+    console.log(`d100roll for pattern ${pattern} was ${d100roll}`);
+    if (d100roll < percentChance) {
       await say(response);
     } 
   });
@@ -40,6 +40,14 @@ const gayEmojis = [
 ];
 
 //All the room in the world for your code
+app.event('member_joined_channel', async ({ event, client, context }) => {
+  console.log("event", event);
+  console.log("client", client);
+  console.log("context", context);
+  
+})
+
+
 app.event('message', async ({ event, client, context }) => {
   // console.log("event", event);
   // console.log("client", client);
@@ -51,7 +59,7 @@ app.event('message', async ({ event, client, context }) => {
     channel
   } = event;
   
-  if (event.text.match(/gay/)) {
+  if (event && event.text && event.text.match(/gay/)) {
     await client.reactions.add({
       name: gayEmojis[Math.floor(Math.random()*gayEmojis.length)],
       timestamp: ts,
