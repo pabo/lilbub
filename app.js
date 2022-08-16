@@ -6,7 +6,12 @@ const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET
 });
 
-
+const gayEmojis = [
+  "gayseal",
+  "le-gay",
+  "gaycurious",
+  "fabulously-gay"
+];
 
 //All the room in the world for your code
 app.event('message', async ({ event, client, context }) => {
@@ -22,7 +27,7 @@ app.event('message', async ({ event, client, context }) => {
   
   if (event.text.match(/gay/)) {
     await client.reactions.add({
-      name: 'gayseal',
+      name: gayEmojis[Math.floor(Math.random()*gayEmojis.length)],
       timestamp: ts,
       channel, channel
     })
