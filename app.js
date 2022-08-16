@@ -39,19 +39,23 @@ const gayEmojis = [
   "fabulously-gay"
 ];
 
-//All the room in the world for your code
 app.event('member_joined_channel', async ({ event, client, context }) => {
   console.log("event", event);
   console.log("client", client);
   console.log("context", context);
-  client.conversations.kick({
-    
-  })
-  const {
+    const {
     user,
     channel
   } = event;
   
+  // hanam, tv-and-movies-no-hanams-allowed
+  if (channel === 'C03TS27AN2H' && user === 'U012MRK5RJR') {
+    client.conversations.kick({
+      channel,
+      user
+    });
+  }
+
 })
 
 
