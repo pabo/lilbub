@@ -26,7 +26,7 @@ for (const entry of entries) {
   app.message(pattern, async ({ message, say }) => {
     const d100roll = Math.random() * 100; 
     console.log(`d100roll for pattern ${pattern} was ${d100roll}`);
-    if (d100roll < percentChance) {
+    if (d100roll <= percentChance) {
       await say(response);
     } 
   });
@@ -44,6 +44,13 @@ app.event('member_joined_channel', async ({ event, client, context }) => {
   console.log("event", event);
   console.log("client", client);
   console.log("context", context);
+  client.conversations.kick({
+    
+  })
+  const {
+    user,
+    channel
+  } = event;
   
 })
 
