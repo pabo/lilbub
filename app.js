@@ -11,22 +11,24 @@ const entries = [
     {
         pattern: /ur[au]gu?ay/i,
         response: "no, you're a gay",
-        percentChance: 100,
+        perchance: 100,
     },
     {
         pattern: /gay/i,
         response: "I don't know how to tell my parents that I'm gay",
-        percentChance: 1,
+        perchance: 1,
     },
-    
 ];
 
 for (const entry of entries) {
-  const {pattern, response, percentChance} = entry;
+  const {pattern, response, perchance} = entry;
   app.message(pattern, async ({ message, say }) => {
+    
     const d100roll = Math.random() * 100; 
+    
     console.log(`d100roll for pattern ${pattern} was ${d100roll}`);
-    if (d100roll <= percentChance) {
+    
+    if (d100roll <= perchance) {
       await say(response);
     } 
   });
@@ -56,6 +58,13 @@ app.event('member_joined_channel', async ({ event, client, context }) => {
     });
   }
 
+  // brett, testing-new-channel
+  if (channel === 'C03TPEWN2MC' && user === 'U012FAHGTB7') {
+    client.conversations.kick({
+      channel,
+      user
+    });
+  }
 })
 
 
