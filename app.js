@@ -25,7 +25,7 @@ app.event('message', async ({ event, client, context }) => {
     channel
   } = event;
   
-  if (event.text.match(/gay/)) {
+  if (event.text.match(/ gay /)) {
     await client.reactions.add({
       name: gayEmojis[Math.floor(Math.random()*gayEmojis.length)],
       timestamp: ts,
@@ -34,13 +34,17 @@ app.event('message', async ({ event, client, context }) => {
   }
 });
 
-// app.message(/gay/, async ({ message, say }) => {
-//   // await say(`No, <@${message.user}> is gay`);
-//   await app.reactions.add({
-//     name: 'gayseal'
-//   })
-// });
+app.message(/gay/, async ({ message, say }) => {
+  const d100roll = Math.random() * 100; 
+  console.log("d100roll was", d100roll);
+  if (d100roll === 1) {    
+    await say("I don't know how to tell my parents that I'm gay");
+  } 
+});
 
+app.message(/[uU]r[au]gu?ay/i, async ({ message, say }) => {
+    await say("No, you're a gay.");
+});
 
 app.event('app_home_opened', async ({ event, client, context }) => {
   try {
