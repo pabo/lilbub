@@ -7,9 +7,23 @@ const app = new App({
 });
 
 
+// Slackbot++
 const entries = [
     {
         pattern: /ur[au]gu?ay/i,
+        response: "no, you're a gay",
+        perchance: 100,
+    },
+    {
+        pattern: /gay/i,
+        response: "I don't know how to tell my parents that I'm gay",
+        perchance: 1,
+    },
+];
+
+const entries2 = [
+    {
+        channel: 'C03RTAMR2L', // #chan-gets-
         response: "no, you're a gay",
         perchance: 100,
     },
@@ -34,23 +48,14 @@ for (const entry of entries) {
   });
 }
 
-const gayEmojis = [
-  "gayseal",
-  "le-gay",
-  "gaycurious",
-  "fabulously-gay"
-];
-
+// Kick on join
 app.event('member_joined_channel', async ({ event, client, context }) => {
-  console.log("event", event);
-  console.log("client", client);
-  console.log("context", context);
     const {
     user,
     channel
   } = event;
   
-  // hanam, tv-and-movies-no-hanams-allowed
+  // @hanam, #tv-and-movies-no-hanams-allowed
   if (channel === 'C03TS27AN2H' && user === 'U012MRK5RJR') {
     client.conversations.kick({
       channel,
@@ -58,7 +63,7 @@ app.event('member_joined_channel', async ({ event, client, context }) => {
     });
   }
 
-  // brett, testing-new-channel
+  // @brett, #testing-new-channel
   if (channel === 'C03TPEWN2MC' && user === 'U012FAHGTB7') {
     client.conversations.kick({
       channel,
@@ -68,17 +73,27 @@ app.event('member_joined_channel', async ({ event, client, context }) => {
 })
 
 
+const gayEmojis = [
+  "gayseal",
+  "le-gay",
+  "gaycurious",
+  "fabulously-gay"
+];
+
 app.event('message', async ({ event, client, context }) => {
-  // console.log("event", event);
+  console.log("event", event);
   // console.log("client", client);
   // console.log("context", context);
   
   const {
     ts,
     message,
-    channel
+    channel,
+    user
   } = event;
   
+  
+  // gay emojis
   if (event && event.text && event.text.match(/gay/)) {
     await client.reactions.add({
       name: gayEmojis[Math.floor(Math.random()*gayEmojis.length)],
@@ -86,6 +101,21 @@ app.event('message', async ({ event, client, context }) => {
       channel, channel
     })
   }
+  
+  // #chan-gets-a-job, @chan
+  if (channel === 'C03RTAMR2L' && user === 'U0136UH7V3J') {
+    const d100roll = Math.random() * 100; 
+    
+    console.log(`d100roll was ${d100roll}`);
+    
+    if (d100roll <= 5) {
+      client.chat.postMessage({
+        channel,
+        text: "get a job"
+      })
+    } 
+  }
+  
 });
 
 
