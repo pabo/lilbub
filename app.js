@@ -1,6 +1,11 @@
 // Require the Bolt package (github.com/slackapi/bolt)
 const { App } = require("@slack/bolt");
 
+const app = new App({
+  token: process.env.SLACK_BOT_TOKEN,
+  signingSecret: process.env.SLACK_SIGNING_SECRET
+});
+
 const users = {
   chan: 'U0136UH7V3J',
   hanam: 'U012MRK5RJR',
@@ -10,16 +15,10 @@ const users = {
 const channels = {
   'testing-new-channel': 'C03TPEWN2MC',
   'tv-and-movies-no-hanams-allowed': 'C03TS27AN2H',
-  'lil-bub-dev': 'C03TVR0JDC3'
+  'lil-bub-dev': 'C03TVR0JDC3',
+  'chan-gets-a-job': 'C03RTAMR2L',
 }
 
-const app = new App({
-  token: process.env.SLACK_BOT_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET
-});
-
-
-// Slackbot++
 const respondToPattern = [
     {
         pattern: /ur[au]gu?ay/i,
@@ -35,9 +34,9 @@ const respondToPattern = [
 
 const respondToUserInChannel = [
     {
-        channelMatch: 'C03RTAMR2L', // #chan-gets-a-job
-        userMatch: 'U0136UH7V3J', // @chan
-        response: "get a job",
+        channelMatch: channels['chan-gets-a-job'],
+        userMatch: users.chan,
+        response: 'get a job',
         perchance: 5,
     },
 ];
@@ -58,10 +57,19 @@ const emojiReponses = [
 
 const kickOnJoin = [
   {
-    user: users.chan,
-    channel: 'C03TS27AN2H'
-  }
-]
+    userMatch: users.chan,
+    channelMatch: channels['lil-bub-dev'],
+  },
+   {
+    userMatch: users.hanam,
+    channelMatch: channels['tv-and-movies-no-hanams-allowed'],
+  },
+  {
+    userMatch: users.brett,
+    channelMatch: channels['testing-new-channel'],
+  },
+];
+
 
 for (const entry of respondToPattern) {
   const {pattern, response, perchance} = entry;
@@ -85,29 +93,14 @@ app.event('member_joined_channel', async ({ event, client, context }) => {
   } = event;
   
   for (const entry of kickOnJoin) {
-    const {user, channel} = entry;
+    const {userMatch, channelMatch} = entry;
     
-      if (channel === channels['tv-and-movies-no-hanams-allowed'] && user === users.hanam) {
-    client.conversations.kick({
-      channel,
-      user
-    });
-  }
-
-  }
-  
-  if (channel === channels['tv-and-movies-no-hanams-allowed'] && user === users.hanam) {
-    client.conversations.kick({
-      channel,
-      user
-    });
-  }
-
-  if (channel === channels['testing-new-channel'] && user === users.brett) {
-    client.conversations.kick({
-      channel,
-      user
-    });
+    if (channel === channelMatch && user === userMatch) {
+      client.conversations.kick({
+        channel,
+        user
+      });
+    }
   }
 })
 
