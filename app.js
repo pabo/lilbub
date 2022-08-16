@@ -7,31 +7,30 @@ const app = new App({
 });
 
 
-// const entries = [
-//     {
-//         pattern: /ur[au]gu?ay/i,
-//         response: "no, you're a gay",
-//         percentChance: 100,
-//     },
-//     {
-//         pattern: / gay /i,
-//         response: "I don't know how to tell my parents that I'm gay",
-//         percentChance: 1,
-//     },
+const entries = [
+    {
+        pattern: /ur[au]gu?ay/i,
+        response: "no, you're a gay",
+        percentChance: 100,
+    },
+    {
+        pattern: /gay/i,
+        response: "I don't know how to tell my parents that I'm gay",
+        percentChance: 1,
+    },
     
-// ];
+];
 
-// for (const entry of entries) {
-//   const {pattern, response, percentChance} = entry;
-//   app.message(pattern, async ({ message, say }) => {
-//     const d100roll = Math.random() * 100; 
-//     console.log("d100roll was", d100roll);
-//     if (d100roll < percentChance) {    
-//       await say(response);
-//     } 
-//   });
-// }
-console.log("starting app")
+for (const entry of entries) {
+  const {pattern, response, percentChance} = entry;
+  app.message(pattern, async ({ message, say }) => {
+    const d100roll = Math.random() * 100; 
+    console.log("d100roll was", d100roll);
+    if (d100roll < percentChance) {    
+      await say(response);
+    } 
+  });
+}
 
 const gayEmojis = [
   "gayseal",
@@ -42,7 +41,7 @@ const gayEmojis = [
 
 //All the room in the world for your code
 app.event('message', async ({ event, client, context }) => {
-  console.log("event", event);
+  // console.log("event", event);
   // console.log("client", client);
   // console.log("context", context);
   
@@ -60,3 +59,11 @@ app.event('message', async ({ event, client, context }) => {
     })
   }
 });
+
+
+(async () => {
+  // Start your app
+  await app.start(process.env.PORT || 3000);
+
+  console.log('⚡️ Bolt app is running!');
+})();
