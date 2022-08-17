@@ -1,168 +1,139 @@
-// Require the Bolt package (github.com/slackapi/bolt)
 const { App } = require("@slack/bolt");
+const initSpellmoji = require("./spellmoji");
+const initThanos = require("./thanos");
+const { dieRoll, members, channels } = require("./utils");
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
 
-const users = {
-  chan: 'U0136UH7V3J',
-  hanam: 'U012MRK5RJR',
-  brett: 'U012FAHGTB7',
-}
 
-const channels = {
-  'testing-new-channel': 'C03TPEWN2MC',
-  'tv-and-movies-no-hanams-allowed': 'C03TS27AN2H',
-  'lil-bub-dev': 'C03TVR0JDC3',
-  'chan-gets-a-job': 'C03RTAMR2L',
-}
+// const getUserInfo = async () => {
+//   const info = await app.client.users.list();
+
+//   info.members.forEach(m => {
+//     console.log(`${m.real_name}: "${m.id}",`);
+//   }) 
+// }
+
+// getUserInfo();
+
+
+
+initSpellmoji(app);
+initThanos(app);
+
+// VVVV edit these configs to add more use cases VVVV
 
 const respondToPattern = [
-    {
-        pattern: /ur[au]gu?ay/i,
-        response: "no, you're a gay",
-        perchance: 100,
-    },
-    {
-        pattern: /gay/i,
-        response: "I don't know how to tell my parents that I'm gay",
-        perchance: 1,
-    },
+  {
+    pattern: /ur[au]gu?ay/i,
+    response: "no, you're a gay",
+    perchance: 100,
+  },
+  {
+    pattern: /gay/i,
+    response: "I don't know how to tell my parents that I'm gay",
+    perchance: 1,
+  },
 ];
 
 const respondToUserInChannel = [
-    {
-        channelMatch: channels['chan-gets-a-job'],
-        userMatch: users.chan,
-        response: 'get a job',
-        perchance: 5,
-    },
+  {
+    channelMatch: channels["chan-gets-a-job"],
+    userMatch: members.chan,
+    response: "get a job",
+    perchance: 5,
+  },
 ];
 
 const emojiReponses = [
   {
-    pattern: /gay/,
+    pattern: /gay/i,
     emojis: [
       "gayseal",
       "le-gay",
       "gaycurious",
       "fabulously-gay",
-      "erik-pretty"
-    ]
-  }
+      "erik_pretty",
+    ],
+  },
 ];
-
 
 const kickOnJoin = [
   {
-    userMatch: users.chan,
-    channelMatch: channels['lil-bub-dev'],
-  },
-   {
-    userMatch: users.hanam,
-    channelMatch: channels['tv-and-movies-no-hanams-allowed'],
+    userMatch: members.chan,
+    channelMatch: channels["lil-bub-dev"],
   },
   {
-    userMatch: users.brett,
-    channelMatch: channels['testing-new-channel'],
+    userMatch: members.hanam,
+    channelMatch: channels["tv-and-movies-no-hanams-allowed"],
+  },
+  {
+    userMatch: members.brett,
+    channelMatch: channels["testing-new-channel"],
   },
 ];
 
+// ^^^^ edit these configs to add more use cases ^^^^
 
 for (const entry of respondToPattern) {
-  const {pattern, response, perchance} = entry;
+  const { pattern, response, perchance } = entry;
   app.message(pattern, async ({ message, say }) => {
-    
-    const d100roll = Math.random() * 100; 
-    
-    console.log(`d100roll for pattern ${pattern} was ${d100roll}`);
-    
-    if (d100roll <= perchance) {
-      await say(response);
-    } 
+    if (dieRoll(perchance)) {
+      say(response);
+    }
   });
 }
 
 // Kick on join
-app.event('member_joined_channel', async ({ event, client, context }) => {
-    const {
-    user,
-    channel
-  } = event;
-  
+app.event("member_joined_channel", async ({ event, client }) => {
+  const { user, channel } = event;
+
   for (const entry of kickOnJoin) {
-    const {userMatch, channelMatch} = entry;
-    
+    const { userMatch, channelMatch } = entry;
+
     if (channel === channelMatch && user === userMatch) {
       client.conversations.kick({
         channel,
-        user
+        user,
       });
     }
   }
-})
+});
 
+app.event("message", async ({ event, client }) => {
+  const { text, ts, channel, user } = event;
 
-const gayEmojis = [
-  "gayseal",
-  "le-gay",
-  "gaycurious",
-  "fabulously-gay"
-];
-
-app.event('message', async ({ event, client, context }) => {
-  // console.log("event", event);
-  // console.log("client", client);
-  // console.log("context", context);
-  
-  const {
-    ts,
-    message,
-    channel,
-    user
-  } = event;
-  
-  
-  
   for (const entry of emojiReponses) {
-    const {pattern, emojis} = entry;
-    
-    if (event && event.text && event.text.match(pattern)) {
+    const { pattern, emojis } = entry;
+
+    if (text && text.match(pattern)) {
       await client.reactions.add({
-        name: emojis[Math.floor(Math.random()*emojis.length)],
+        name: emojis[Math.floor(Math.random() * emojis.length)],
         timestamp: ts,
-        channel, channel
-      })
-    }  
-  }
-
-  
-  // per user/channel  
-  for (const entry of respondToUserInChannel) {
-    const {channelMatch, userMatch, response, perchance} = entry;
-  
-
-    if (user === userMatch && channel && channelMatch) {
-      const d100roll = Math.random() * 100; 
-      console.log(`d100roll for user ${user} channel ${channel} was ${d100roll}`);
-
-      if (d100roll <= perchance) {
-        client.chat.postMessage({
-          channel,
-          text: response
-        })
-      }
+        channel,
+        channel,
+      });
     }
   }
 
-});
+  for (const entry of respondToUserInChannel) {
+    const { channelMatch, userMatch, response, perchance } = entry;
 
+    if (user === userMatch && channel === channelMatch && dieRoll(perchance)) {
+      client.chat.postMessage({
+        channel,
+        text: response,
+      });
+    }
+  }
+});
 
 (async () => {
   // Start your app
-  await app.start(process.env.PORT || 3000);
+  await app.start(process.env.PORT || 8124);
 
-  console.log('⚡️ Bolt app is running!');
+  console.log("⚡️ Bolt app is running!");
 })();
