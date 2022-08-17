@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { membersById, members } = require('./utils');
 
 const COUNTDOWN_IN_MINUTES = 5;
 const ONE_MINUTE_IN_MS = 60000;
@@ -11,7 +12,7 @@ const ONE_MINUTE_IN_MS = 60000;
 // TODO: required downvotes increments each time
 
 module.exports = (app) => {
-  let snapTs = null;
+  let snapMessageTs = null;
   let downvotesRequired = 0; // TODO: read from disk
   let downvoteCount = 0;
   let snapChannel = null;
@@ -29,60 +30,87 @@ module.exports = (app) => {
   }
 
   const quotes = [
+    "Dread it. Run from it. Destiny arrives all the same. And now it's here. Or should I say, I am.",
     "The hardest choices require the strongest wills.",
     "At random. Dispassionate, fair to rich and poor alike. They called me a mad man. And what I predicted came to pass.",
-    "Hear me and rejoice! You have had the privilege of being saved by the Great Titan. You may think this is suffering. No... it is salvation. The universal scales tip toward balance because of your sacrifice. Smile... for even in death, you have become children of Thanos.",
-    "Dread it. Run from it. Destiny arrives all the same. And now it's here. Or should I say, I am.",
-    "What I'm about to do to your stubborn, annoying little planet, I'm gonna enjoy it, very, very much.",
-    "You're strong, but I could snap my fingers and you'd all cease to exist.",
     "I am... inevitable.",
+    "You're strong, but I could snap my fingers and you'd all cease to exist.",
+    "What I'm about to do to your stubborn, annoying little planet, I'm gonna enjoy it, very, very much.",
+    "Hear me and rejoice! You have had the privilege of being saved by the Great Titan. You may think this is suffering. No... it is salvation. The universal scales tip toward balance because of your sacrifice. Smile... for even in death, you have become children of Thanos.",
   ];
+  let quoteCounter = 0;
+  let randomQuotes = quotes;
 
   const getRandomQuote = () => {
-    return quotes[Math.floor(Math.random() * quotes.length)];
+    const quote = randomQuotes[quoteCounter];
+
+    quoteCounter = (quoteCounter + 1) % randomQuotes.length;
+
+    return quote;
   };
 
-  const getStatusText = () => {
+  const getPleaText =  () => {
     const snapSucceeding = downvoteCount < downvotesRequired;
 
-    return `You have ${countdownMinutesRemaining} minutes remaining. ${downvotesRequired} downvotes will stop Thanos. Currently, there are ${snapSucceeding ? `only` : ""} ${downvoteCount} downvotes. ${snapSucceeding ? "Won't you help stop Thanos?" : "Hope no one changes their minds..."}`;
+    return snapSucceeding
+        ? "Won't you help stop Thanos?"
+        : "Hope no one changes their minds..."
+  };
+ 
+  const getDownvoteStatusText = () => {
+    const snapSucceeding = downvoteCount < downvotesRequired;
+
+    const downvotesText = downvoteCount
+      ? `${snapSucceeding ? `` : ""} ${downvoteCount} downvotes`
+      : "no downvotes yet";
+   
+    return `:downvote: ${downvotesText} (${downvotesRequired} required)`;
   };
 
-  const getPostMessagePayload = (initial) => {
-    const text = initial
-      ? "This universe is finite, its resources, finite... if life is left unchecked, life will cease to exist."
-      : getRandomQuote();
-
+  const getPostMessagePayload = () => {
+    const text =
+      "_This universe is finite, its resources, finite... if life is left unchecked, life will cease to exist._";
     const blocks = [
       {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `_${text}_`,
+          text,
         },
       },
       {
         type: "divider",
       },
-    ];
-
-    if (initial) {
-      blocks.push({
+      {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "*React to this message with :downvote: to prevent The Snap.*",
+          text: "@here *React to this message with :downvote: to prevent The Snap.*",
         },
-      });
-    }
-
-    blocks.push({
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: getStatusText(),
       },
-    });
+      {
+        "type": "section",
+			  "fields": [
+				  {
+            type: "plain_text",
+					  "text": `:clock1: ${countdownMinutesRemaining} minutes remaining`,
+					  "emoji": true
+				  },
+				  {
+            type: "plain_text",
+					  "text": getDownvoteStatusText(),
+					  "emoji": true
+				  },
+        ]
+      },
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: getPleaText(),
+        },
+      }
+    ];
 
     return {
       blocks,
@@ -94,9 +122,13 @@ module.exports = (app) => {
     const { text, channel } = event;
 
     // initiate a snap
-    if (!snapTs && text && text.match(/Thanos did nothing wrong/)) {
+    if (!snapMessageTs && text && text.match(/Thanos did nothing wrong/)) {
       downvoteCount = 0;
       countdownMinutesRemaining = COUNTDOWN_IN_MINUTES;
+
+      // This is NOT VERY RANDOM but its a stupid slackbot app so who cares. It's biased towards the existing order.
+      randomQuotes = quotes.sort(() => 0.5 - Math.random());
+      quoteCounter = 0;
 
       // every time we snap, it takes one more downvote to stop it
       downvotesRequired++;
@@ -116,17 +148,21 @@ module.exports = (app) => {
       snappedMembers = (membersResult.members || []).filter(
         () => Math.random() > 0.5
       );
-      console.log("members who would be snapped:", snappedMembers);
-
-      // inform channel of impending snap
-      const result = await client.chat.postMessage({
-        channel,
-        text: "This universe is finite, its resources, finite... if life is left unchecked, life will cease to exist. React to this message with :downvote: to prevent The Snap.",
-        ...getPostMessagePayload(true),
+     
+      const snappedMembersText = snappedMembers.map(m => {
+        return membersById[m]
       });
 
-      // these keep track of the message that will be voted on
-      snapTs = result.ts;
+      console.log("members who would be snapped:", snappedMembersText.join(", "));
+
+      // create the snapMessage, informing channel of impending snap
+      const result = await client.chat.postMessage({
+        channel,
+        ...getPostMessagePayload(),
+      });
+
+      // these keep track of the snap message
+      snapMessageTs = result.ts;
       snapChannel = channel;
 
       // set up minute-ly updates
@@ -198,12 +234,29 @@ module.exports = (app) => {
           }
 
           // reset snapTs, which means we can listen for another snap
-          snapTs = null;
+          snapMessageTs = null;
         }
         // not out of time yet
         else {
+          const quote = getRandomQuote();
+
           await client.chat.postMessage({
             channel,
+            text: quote,
+            blocks: [
+              {
+                type: "section",
+                text: {
+                  type: "mrkdwn",
+                  text: `_${quote}_`,
+                },
+              },
+            ],
+          });
+
+          await client.chat.update({
+            channel,
+            ts: snapMessageTs,
             ...getPostMessagePayload(),
           });
         }
@@ -216,8 +269,8 @@ module.exports = (app) => {
     const { ts, channel } = item;
 
     if (
-      snapTs &&
-      snapTs === ts &&
+      snapMessageTs &&
+      snapMessageTs === ts &&
       snapChannel &&
       snapChannel === channel &&
       reaction &&
@@ -225,6 +278,11 @@ module.exports = (app) => {
     ) {
       downvoteCount++;
       console.log("downvotes:", downvoteCount);
+      await client.chat.update({
+        channel,
+        ts: snapMessageTs,
+        ...getPostMessagePayload(),
+      });
     }
   });
 
@@ -233,8 +291,8 @@ module.exports = (app) => {
     const { ts, channel } = item;
 
     if (
-      snapTs &&
-      snapTs === ts &&
+      snapMessageTs &&
+      snapMessageTs === ts &&
       snapChannel &&
       snapChannel === channel &&
       reaction &&
@@ -242,6 +300,11 @@ module.exports = (app) => {
     ) {
       downvoteCount--;
       console.log("downvotes:", downvoteCount);
+      await client.chat.update({
+        channel,
+        ts: snapMessageTs,
+        ...getPostMessagePayload(),
+      });
     }
   });
 };

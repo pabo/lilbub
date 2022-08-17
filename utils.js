@@ -41,7 +41,12 @@ const members = {
     //spellmoji: "U02JCH9TPH6",
     //Distill.io Notifier: "U03JWJ4410F",
     //Lil Bub: "U03TSKB0MJR",
-  };
+};
+
+const membersById = {};
+Object.entries(members).forEach(([name, id]) => {
+    membersById[id] = name;
+});
   
 const channels = {
     "testing-new-channel": "C03TPEWN2MC",
@@ -54,5 +59,6 @@ const channels = {
 module.exports = {
     dieRoll,
     members,
+    membersById,
     channels,
 }
