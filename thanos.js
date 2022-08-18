@@ -1,8 +1,9 @@
 const fs = require("fs");
-const { membersById } = require('./utils');
+const { membersById, members } = require("./utils");
 
 const COUNTDOWN_IN_MINUTES = 5;
 const ONE_MINUTE_IN_MS = 60000;
+const MINIMUM_VOTES_REQUIRED = 4;
 
 // When someone says "Thanos did nothing wrong", start a countdown to the snap.
 // The snap will remove half of the users of a channel at random.
@@ -12,18 +13,15 @@ const ONE_MINUTE_IN_MS = 60000;
 
 module.exports = (app) => {
   let snapMessageTs = null;
-  let downvotesRequired = 0;
-  let downvoteCount = 0;
+  let votesRequired = 10;
+  let voteCount = 0;
   let snapChannel = null;
-  let snappedMembers = [];
+  const votedMembers = new Set();
   let countdownMinutesRemaining = COUNTDOWN_IN_MINUTES;
 
   try {
-    downvotesRequired = parseInt(
-      fs.readFileSync("downvotesRequired.txt", "utf8"),
-      10
-    );
-    console.log(downvotesRequired);
+    votesRequired = parseInt(fs.readFileSync("votesRequired.txt", "utf8"), 10);
+    console.log(`next snap requires ${votesRequired - 1} votes`);
   } catch (err) {
     console.error(err);
   }
@@ -48,22 +46,23 @@ module.exports = (app) => {
     return quote;
   };
 
-  const getPleaText =  () => {
-    const snapSucceeding = downvoteCount < downvotesRequired;
+  const getPleaText = () => {
+    const snapSucceeding = voteCount >= votesRequired;
 
-    return snapSucceeding
-        ? "Won't you help stop Thanos?"
-        : "Hope no one changes their minds..."
+    return "";
+    // return snapSucceeding
+    // ? "Hope no one changes their minds..."
+    // : ""
   };
- 
-  const getDownvoteStatusText = () => {
-    const snapSucceeding = downvoteCount < downvotesRequired;
 
-    const downvotesText = downvoteCount
-      ? `${snapSucceeding ? `` : ""} ${downvoteCount} downvotes`
-      : "no downvotes yet";
-   
-    return `:downvote: ${downvotesText} (${downvotesRequired} required)`;
+  const getDownvoteStatusText = () => {
+    const snapSucceeding = voteCount >= votesRequired;
+
+    const votesText = voteCount
+      ? `${snapSucceeding ? `` : ""} ${voteCount} votes`
+      : "no votes yet";
+
+    return `:ohsnap: ${votesText} (${votesRequired} required)`;
   };
 
   const getPostMessagePayload = () => {
@@ -84,31 +83,34 @@ module.exports = (app) => {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "@here *React to this message with :downvote: to prevent The Snap.*",
+          text: "*React to this message with :ohsnap: to enable The Snap.*\n\n_But you should know that it extracts a terrible price._\n\nThose voting for the snap are more likely to be snapped! If this Snap doesn't succeed, the next one will require fewer votes.",
         },
-      },
-      {
-        "type": "section",
-			  "fields": [
-				  {
-            type: "plain_text",
-					  "text": `:clock1: ${countdownMinutesRemaining} minutes remaining`,
-					  "emoji": true
-				  },
-				  {
-            type: "plain_text",
-					  "text": getDownvoteStatusText(),
-					  "emoji": true
-				  },
-        ]
       },
       {
         type: "section",
-        text: {
-          type: "mrkdwn",
-          text: getPleaText(),
-        },
-      }
+        fields: [
+          {
+            type: "plain_text",
+            text: `:clock1: ${countdownMinutesRemaining} minutes remaining`,
+            emoji: true,
+          },
+          {
+            type: "plain_text",
+            text: getDownvoteStatusText(),
+            emoji: true,
+          },
+        ],
+      },
+      // {
+      //   type: "section",
+      //   text: {
+      //     type: "mrkdwn",
+      //     text: getPleaText(),
+      //   },
+      // },
+      {
+        type: "divider",
+      },
     ];
 
     return {
@@ -122,38 +124,23 @@ module.exports = (app) => {
 
     // initiate a snap
     if (!snapMessageTs && text && text.match(/thanos ?did ?nothing ?wrong/i)) {
-      downvoteCount = 0;
+    // if (!snapMessageTs && text && text.match(/trigger phrase/i)) {
+      voteCount = 0;
       countdownMinutesRemaining = COUNTDOWN_IN_MINUTES;
 
       // This is NOT VERY RANDOM but its a stupid slackbot app so who cares. It's biased towards the existing order.
       randomQuotes = quotes.sort(() => 0.5 - Math.random());
       quoteCounter = 0;
 
-      // every time we snap, it takes one more downvote to stop it
-      downvotesRequired++;
+      // every time we snap, it takes one less upvote to stop it
+      votesRequired = Math.max(votesRequired-1, MINIMUM_VOTES_REQUIRED);
 
       try {
-        fs.writeFileSync("downvotesRequired.txt", `${downvotesRequired}`);
+        fs.writeFileSync("votesRequired.txt", `${votesRequired}`);
         // file written successfully
       } catch (err) {
         console.error(err);
       }
-
-      // grab the set of members who will be snapped
-      membersResult = await client.conversations.members({
-        channel,
-      });
-
-      snappedMembers = (membersResult.members || []).filter(
-        () => Math.random() > 0.5
-      );
-     
-      const snappedMembersText = snappedMembers.map(m => {
-        return membersById[m]
-      });
-
-      console.log("members who would be snapped:", snappedMembersText.join(", "));
-
       // create the snapMessage, informing channel of impending snap
       const result = await client.chat.postMessage({
         channel,
@@ -174,7 +161,7 @@ module.exports = (app) => {
           clearInterval(handle);
 
           // snap!
-          if (downvoteCount < downvotesRequired) {
+          if (voteCount >= votesRequired) {
             client.chat.postMessage({
               channel,
               text: "Perfectly balanced, as all things should be.\n\nhttps://giphy.com/gifs/46F2QiR8sAX5ezp2pG",
@@ -189,16 +176,38 @@ module.exports = (app) => {
               ],
             });
 
-            for (const user of snappedMembers) {
+            // grab the set of members who will be snapped
+            const membersResult = await client.conversations.members({
+              channel,
+            });
+
+            const snappedMembers = (membersResult.members || []).filter((m) => {
               // dont kick lilbub
-              if (user !== "U03TSKB0MJR") {
-                try {
-                  await client.conversations.kick({
-                    channel,
-                    user,
-                  });
-                } catch (e) {
-                  /* bot failed to kick this set:
+              if (user === members.lilbub) {
+                return false;
+              }
+
+              const threshhold = votedMembers.has(m) ? 0.75 : 0.25;
+              return Math.random() < threshhold;
+            });
+
+            const snappedMembersText = snappedMembers.map((m) => {
+              return membersById[m];
+            });
+
+            console.log(
+              "members to be snapped:",
+              snappedMembersText.join(", ")
+            );
+
+            for (const user of snappedMembers) {
+              try {
+                await client.conversations.kick({
+                  channel,
+                  user,
+                });
+              } catch (e) {
+                /* bot failed to kick this set:
                     'U01220V5U0P', 'U012238MWJK',
                     'U0122BGBAPR', 'U012A4QRQTG',
                     'U012GNATCUA', 'U012LRFBZMY',
@@ -207,25 +216,22 @@ module.exports = (app) => {
                     'U01GR9QKNAY', 'U01L8PV7AF4',
                     'U03TSKB0MJR'
                    */
-                  console.log(
-                    `could not kick user ${user}, for reason ${e}`,
-                    e
-                  );
-                }
+                console.log(`could not kick user ${user}, for reason ${e}`, e);
               }
             }
           }
           // saved from snap
           else {
+            const loserText = `_I know what it's like to lose. To feel so desperately that you're right, yet to fail nonetheless. It's frightening, turns the legs to jelly._\n\nThe Snap only received ${voteCount} votes. Until next time...`;
             client.chat.postMessage({
               channel,
-              text: `I know what it's like to lose. To feel so desperately that you're right, yet to fail nonetheless. It's frightening, turns the legs to jelly.\n\nYou have merely delayed the inevitable with ${downvoteCount} downvotes. Congratulations. Until next time...`,
+              text: loserText,
               blocks: [
                 {
                   type: "section",
                   text: {
                     type: "mrkdwn",
-                    text: `_I know what it's like to lose. To feel so desperately that you're right, yet to fail nonetheless. It's frightening, turns the legs to jelly._\n\nYou have merely delayed the inevitable with ${downvoteCount} downvotes. Congratulations. Until next time...`,
+                    text: loserText,
                   },
                 },
               ],
@@ -264,7 +270,7 @@ module.exports = (app) => {
   });
 
   app.event("reaction_added", async ({ event, client, context }) => {
-    const { item, reaction } = event;
+    const { item, reaction, user } = event;
     const { ts, channel } = item;
 
     if (
@@ -273,10 +279,11 @@ module.exports = (app) => {
       snapChannel &&
       snapChannel === channel &&
       reaction &&
-      reaction === "downvote"
+      reaction === "ohsnap"
     ) {
-      downvoteCount++;
-      console.log("downvotes:", downvoteCount);
+      voteCount++;
+      votedMembers.add(user);
+      console.log("votes:", voteCount);
       await client.chat.update({
         channel,
         ts: snapMessageTs,
@@ -286,7 +293,7 @@ module.exports = (app) => {
   });
 
   app.event("reaction_removed", async ({ event, client, context }) => {
-    const { item, reaction } = event;
+    const { item, reaction, user } = event;
     const { ts, channel } = item;
 
     if (
@@ -295,10 +302,11 @@ module.exports = (app) => {
       snapChannel &&
       snapChannel === channel &&
       reaction &&
-      reaction === "downvote"
+      reaction === "ohsnap"
     ) {
-      downvoteCount--;
-      console.log("downvotes:", downvoteCount);
+      voteCount--;
+      votedMembers.delete(user);
+      console.log("votes:", voteCount);
       await client.chat.update({
         channel,
         ts: snapMessageTs,

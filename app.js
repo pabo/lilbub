@@ -61,6 +61,13 @@ const emojiReponses = [
   },
 ];
 
+// not implemented lol
+const kickOnMention = [
+  {
+    pattern: /soup/i,
+  }
+];
+
 const kickOnJoin = [
   {
     userMatch: members.chan,
