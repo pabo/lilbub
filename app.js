@@ -69,10 +69,11 @@ const kickOnMention = [
 ];
 
 const kickOnJoin = [
-  {
-    userMatch: members.chan,
-    channelMatch: channels["lil-bub-dev"],
-  },
+  // he's on probation...
+  // {
+    // userMatch: members.chan,
+    // channelMatch: channels["lil-bub-dev"],
+  // },
   {
     userMatch: members.hanam,
     channelMatch: channels["tv-and-movies-no-hanams-allowed"],
