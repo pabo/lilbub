@@ -50,7 +50,7 @@ const respondToUserInChannel = [
 
 const emojiReponses = [
   {
-    pattern: /gay/i,
+    pattern: /(gay|chris)/i,
     emojis: [
       "gayseal",
       "le-gay",

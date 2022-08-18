@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { membersById, members } = require('./utils');
+const { membersById } = require('./utils');
 
 const COUNTDOWN_IN_MINUTES = 5;
 const ONE_MINUTE_IN_MS = 60000;
@@ -9,11 +9,10 @@ const ONE_MINUTE_IN_MS = 60000;
 // To prevent the snap, we need a certain number of downvotes.
 // TODO: more counting down
 // TODO: early exit on success?
-// TODO: required downvotes increments each time
 
 module.exports = (app) => {
   let snapMessageTs = null;
-  let downvotesRequired = 0; // TODO: read from disk
+  let downvotesRequired = 0;
   let downvoteCount = 0;
   let snapChannel = null;
   let snappedMembers = [];
@@ -122,7 +121,7 @@ module.exports = (app) => {
     const { text, channel } = event;
 
     // initiate a snap
-    if (!snapMessageTs && text && text.match(/Thanos did nothing wrong/)) {
+    if (!snapMessageTs && text && text.match(/thanos ?did ?nothing ?wrong/i)) {
       downvoteCount = 0;
       countdownMinutesRemaining = COUNTDOWN_IN_MINUTES;
 
