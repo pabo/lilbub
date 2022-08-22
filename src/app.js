@@ -1,5 +1,5 @@
 const { App } = require("@slack/bolt");
-const initSpellmoji = require("./spellmoji");
+const { initSpellmoji, addWordAsReactions } = require("./spellmoji");
 const initThanos = require("./thanos");
 const { dieRoll, members, channels } = require("./utils");
 
@@ -8,6 +8,8 @@ const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
 
+
+const SHORT_MESSAGE_THRESHHOLD = 5;
 
 // const getUserInfo = async () => {
 //   const info = await app.client.users.list();
@@ -18,8 +20,6 @@ const app = new App({
 // }
 
 // getUserInfo();
-
-
 
 initSpellmoji(app);
 initThanos(app);
@@ -45,6 +45,18 @@ const respondToUserInChannel = [
     userMatch: members.chan,
     response: "get a job",
     perchance: 5,
+  },
+  {
+    channelMatch: channels.all,
+    userMatch: members.jed,
+    response: "just saw this",
+    perchance: 2,
+  },
+  {
+    channelMatch: channels["tv-and-movies-no-hanams-allowed"],
+    userMatch: members.hanam,
+    response: "What are you even doing in here?",
+    perchance: 25,
   },
 ];
 
@@ -112,7 +124,16 @@ app.event("member_joined_channel", async ({ event, client }) => {
 });
 
 app.event("message", async ({ event, client }) => {
-  const { text, ts, channel, user } = event;
+  const { text, ts: timestamp, channel, user } = event;
+
+  if (text.length <= SHORT_MESSAGE_THRESHHOLD && dieRoll(10)) {
+    addWordAsReactions({
+      client,
+      word: text,
+      channel,
+      timestamp
+    })
+  }
 
   for (const entry of emojiReponses) {
     const { pattern, emojis } = entry;
@@ -120,8 +141,7 @@ app.event("message", async ({ event, client }) => {
     if (text && text.match(pattern)) {
       await client.reactions.add({
         name: emojis[Math.floor(Math.random() * emojis.length)],
-        timestamp: ts,
-        channel,
+        timestamp,
         channel,
       });
     }
@@ -130,7 +150,7 @@ app.event("message", async ({ event, client }) => {
   for (const entry of respondToUserInChannel) {
     const { channelMatch, userMatch, response, perchance } = entry;
 
-    if (user === userMatch && channel === channelMatch && dieRoll(perchance)) {
+    if (user === userMatch && (channel === channelMatch || channelMatch === channels.all ) && dieRoll(perchance)) {
       client.chat.postMessage({
         channel,
         text: response,
@@ -143,5 +163,5 @@ app.event("message", async ({ event, client }) => {
   // Start your app
   await app.start(process.env.PORT || 8124);
 
-  console.log("⚡️ Bolt app is running!");
+  console.log("⚡️ Bolt app is running! v1.2");
 })();

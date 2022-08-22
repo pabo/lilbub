@@ -1,10 +1,4 @@
-module.exports = (app) => {
-  app.view("view_spellmoji", async ({ ack, view, client }) => {
-    await ack();
-
-    const [channel, timestamp] = view.private_metadata.split("|");
-    const word = view.state.values.input_1.word_input.value;
-
+const addWordAsReactions = async ({client, word, channel, timestamp}) => {
     const {
       message: { reactions = [] },
     } = await client.reactions.get({
@@ -50,6 +44,20 @@ module.exports = (app) => {
         await new Promise((r) => setTimeout(r, DELAY_IN_MS));
       }
     }
+  }
+
+const initSpellmoji = (app) => {
+  app.view("view_spellmoji", async ({ ack, view, client }) => {
+    await ack();
+
+    const [channel, timestamp] = view.private_metadata.split("|");
+    const word = view.state.values.input_1.word_input.value;
+
+    addWordAsReactions({
+      word,
+      channel,
+      timestamp
+    })
   });
 
   app.shortcut("spellmoji", async ({ shortcut, ack, client, logger }) => {
@@ -108,4 +116,9 @@ module.exports = (app) => {
       logger.error(error);
     }
   });
+};
+
+module.exports = {
+  initSpellmoji,
+  addWordAsReactions
 };

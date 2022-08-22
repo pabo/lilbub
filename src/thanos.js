@@ -20,7 +20,7 @@ module.exports = (app) => {
   let countdownMinutesRemaining = COUNTDOWN_IN_MINUTES;
 
   try {
-    votesRequired = parseInt(fs.readFileSync("votesRequired.txt", "utf8"), 10);
+    votesRequired = parseInt(fs.readFileSync(`${__dirname}/../votesRequired.txt`, "utf8"), 10);
     console.log(`next snap requires ${votesRequired - 1} votes`);
   } catch (err) {
     console.error(err);
@@ -124,7 +124,6 @@ module.exports = (app) => {
 
     // initiate a snap
     if (!snapMessageTs && text && text.match(/thanos ?did ?nothing ?wrong/i)) {
-    // if (!snapMessageTs && text && text.match(/trigger phrase/i)) {
       voteCount = 0;
       countdownMinutesRemaining = COUNTDOWN_IN_MINUTES;
 
@@ -136,7 +135,7 @@ module.exports = (app) => {
       votesRequired = Math.max(votesRequired-1, MINIMUM_VOTES_REQUIRED);
 
       try {
-        fs.writeFileSync("votesRequired.txt", `${votesRequired}`);
+        fs.writeFileSync(`${__dirname}/../votesRequired.txt`, `${votesRequired}`);
         // file written successfully
       } catch (err) {
         console.error(err);

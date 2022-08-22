@@ -54,6 +54,7 @@ const channels = {
     "lil-bub-dev": "C03TVR0JDC3",
     "chan-gets-a-job": "C03RTAMR2L",
     "job-shit": "C01A8CC9E92",
+    "all": "ALL_CHANNELS"
 }
 
 module.exports = {
