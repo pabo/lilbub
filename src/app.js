@@ -123,10 +123,33 @@ app.event("member_joined_channel", async ({ event, client }) => {
   }
 });
 
+// Join newly created channels
+app.event("channel_created", async ({ event, client }) => {
+  // {
+    // "type": "channel_created",
+    // "channel": {
+      // "id": "C024BE91L",
+      // "name": "fun",
+      // "created": 1360782804,
+      // "creator": "U024BE7LH"
+    // }
+  // }
+
+  const { channel } = event;
+
+  await client.conversations.join({channel: channel.id});
+
+  client.chat.postMessage({
+    channel: channel.id,
+    text: ":shifty:",
+  }); 
+})
+
+
 app.event("message", async ({ event, client }) => {
   const { text, ts: timestamp, channel, user } = event;
 
-  if (text.length <= SHORT_MESSAGE_THRESHHOLD && dieRoll(10)) {
+  if (text && text.length <= SHORT_MESSAGE_THRESHHOLD && dieRoll(10)) {
     addWordAsReactions({
       client,
       word: text,

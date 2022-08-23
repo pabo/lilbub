@@ -1,4 +1,5 @@
-const addWordAsReactions = async ({client, word, channel, timestamp}) => {
+const addWordAsReactions = async ({ client, word, channel, timestamp }) => {
+  try {
     const {
       message: { reactions = [] },
     } = await client.reactions.get({
@@ -44,7 +45,10 @@ const addWordAsReactions = async ({client, word, channel, timestamp}) => {
         await new Promise((r) => setTimeout(r, DELAY_IN_MS));
       }
     }
+  } catch (e) {
+    console.log("Couldn't spellmoji:", e);
   }
+};
 
 const initSpellmoji = (app) => {
   app.view("view_spellmoji", async ({ ack, view, client }) => {
@@ -54,10 +58,11 @@ const initSpellmoji = (app) => {
     const word = view.state.values.input_1.word_input.value;
 
     addWordAsReactions({
+      client,
       word,
       channel,
-      timestamp
-    })
+      timestamp,
+    });
   });
 
   app.shortcut("spellmoji", async ({ shortcut, ack, client, logger }) => {
@@ -120,5 +125,5 @@ const initSpellmoji = (app) => {
 
 module.exports = {
   initSpellmoji,
-  addWordAsReactions
+  addWordAsReactions,
 };
