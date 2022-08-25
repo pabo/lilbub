@@ -1,22 +1,29 @@
 const { App } = require("@slack/bolt");
 const { initSpellmoji, addWordAsReactions } = require("./spellmoji");
 const initThanos = require("./thanos");
-const { dieRoll, members, channels } = require("./utils");
+const { dieRoll, channels } = require("./utils");
+const {
+  reactionsByPattern,
+  respondToPattern,
+  respondToUserInChannel,
+  kickOnJoin,
+} = require("./config");
+
+const DEFAULT_COOLDOWN_SECONDS = 300;
+const responseOnCooldownUntil = new Map();
+const SHORT_MESSAGE_THRESHHOLD = 5;
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
 
-
-const SHORT_MESSAGE_THRESHHOLD = 5;
-
 // const getUserInfo = async () => {
 //   const info = await app.client.users.list();
 
 //   info.members.forEach(m => {
 //     console.log(`${m.real_name}: "${m.id}",`);
-//   }) 
+//   })
 // }
 
 // getUserInfo();
@@ -24,90 +31,31 @@ const SHORT_MESSAGE_THRESHHOLD = 5;
 initSpellmoji(app);
 initThanos(app);
 
-// VVVV edit these configs to add more use cases VVVV
-
-const respondToPattern = [
-  {
-    pattern: /ur[au]gu?ay/i,
-    response: "no, you're a gay",
-    perchance: 100,
-  },
-  {
-    pattern: /gay/i,
-    response: "I don't know how to tell my parents that I'm gay",
-    perchance: 1,
-  },
-];
-
-const respondToUserInChannel = [
-  {
-    channelMatch: channels["chan-gets-a-job"],
-    userMatch: members.chan,
-    response: "get a job",
-    perchance: 5,
-  },
-  {
-    channelMatch: channels.all,
-    userMatch: members.jed,
-    response: "just saw this",
-    perchance: 2,
-  },
-  {
-    channelMatch: channels["tv-and-movies-no-hanams-allowed"],
-    userMatch: members.hanam,
-    response: "What are you even doing in here?",
-    perchance: 25,
-  },
-];
-
-const emojiReponses = [
-  {
-    pattern: /(gay|chris)/i,
-    emojis: [
-      "gayseal",
-      "le-gay",
-      "gaycurious",
-      "fabulously-gay",
-      "erik_pretty",
-    ],
-  },
-];
-
-// not implemented lol
-const kickOnMention = [
-  {
-    pattern: /soup/i,
-  }
-];
-
-const kickOnJoin = [
-  // he's on probation...
-  // {
-    // userMatch: members.chan,
-    // channelMatch: channels["lil-bub-dev"],
-  // },
-  {
-    userMatch: members.hanam,
-    channelMatch: channels["tv-and-movies-no-hanams-allowed"],
-  },
-  {
-    userMatch: members.brett,
-    channelMatch: channels["testing-new-channel"],
-  },
-];
-
-// ^^^^ edit these configs to add more use cases ^^^^
-
+// Respond to a message that matches a given pattern
 for (const entry of respondToPattern) {
-  const { pattern, response, perchance } = entry;
+  const {
+    pattern,
+    response,
+    perchance,
+    cooldown = DEFAULT_COOLDOWN_SECONDS,
+  } = entry;
   app.message(pattern, async ({ message, say }) => {
-    if (dieRoll(perchance)) {
+    const onCDUntil = responseOnCooldownUntil.get(pattern);
+    if (onCDUntil) {
+      console.log(`reponse to pattern ${pattern} is on CD until: ${onCDUntil}`);
+    }
+
+    if (dieRoll(perchance) && (!onCDUntil || Date.now() >= onCDUntil)) {
+      responseOnCooldownUntil.set(
+        pattern,
+        new Date(Date.now() + cooldown * 1000)
+      );
       say(response);
     }
   });
 }
 
-// Kick on join
+// Kick given user when they join given channel
 app.event("member_joined_channel", async ({ event, client }) => {
   const { user, channel } = event;
 
@@ -125,55 +73,56 @@ app.event("member_joined_channel", async ({ event, client }) => {
 
 // Join newly created channels
 app.event("channel_created", async ({ event, client }) => {
-  // {
-    // "type": "channel_created",
-    // "channel": {
-      // "id": "C024BE91L",
-      // "name": "fun",
-      // "created": 1360782804,
-      // "creator": "U024BE7LH"
-    // }
-  // }
-
   const { channel } = event;
 
-  await client.conversations.join({channel: channel.id});
+  await client.conversations.join({ channel: channel.id });
 
   client.chat.postMessage({
     channel: channel.id,
     text: ":shifty:",
-  }); 
-})
-
+  });
+});
 
 app.event("message", async ({ event, client }) => {
   const { text, ts: timestamp, channel, user } = event;
 
+  // addWordAsReaction to short messages
   if (text && text.length <= SHORT_MESSAGE_THRESHHOLD && dieRoll(10)) {
     addWordAsReactions({
       client,
       word: text,
       channel,
-      timestamp
-    })
+      timestamp,
+    });
   }
 
-  for (const entry of emojiReponses) {
-    const { pattern, emojis } = entry;
+  // add reaction to matching patterns
+  for (const entry of reactionsByPattern) {
+    const { pattern, reactions } = entry;
 
     if (text && text.match(pattern)) {
-      await client.reactions.add({
-        name: emojis[Math.floor(Math.random() * emojis.length)],
-        timestamp,
-        channel,
-      });
+      const reactionsToAdd =
+        reactions[Math.floor(Math.random() * reactions.length)];
+
+      for (const name of reactionsToAdd) {
+        await client.reactions.add({
+          name,
+          timestamp,
+          channel,
+        });
+      }
     }
   }
 
+  // respond to a given user when they post in a given channel
   for (const entry of respondToUserInChannel) {
     const { channelMatch, userMatch, response, perchance } = entry;
 
-    if (user === userMatch && (channel === channelMatch || channelMatch === channels.all ) && dieRoll(perchance)) {
+    if (
+      user === userMatch &&
+      (channel === channelMatch || channelMatch === channels.all) &&
+      dieRoll(perchance)
+    ) {
       client.chat.postMessage({
         channel,
         text: response,
