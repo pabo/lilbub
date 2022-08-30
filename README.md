@@ -5,11 +5,11 @@
 ### respondToPattern
 Responds to a message that matches the given regex.
 
-`pattern`: the regex to match
-`reponse`: the response
-`perchance`: percent chance of bot responding when the pattern is matched. 
-`cooldown`: number of seconds to disable this response after responding
-`quoteMatchedPortion`: whether to include the matched portion in the response
+- `pattern`: the regex to match
+- `reponse`: the response
+- `perchance`: percent chance of bot responding when the pattern is matched. 
+- `cooldown`: number of seconds to disable this response after responding
+- `quoteMatchedPortion`: whether to include the matched portion in the response
 
 Example config:
 ```
@@ -25,8 +25,8 @@ Example config:
 ### reactionsByPattern
 Reacts to a message that matches the given regex.
 
-`pattern`: the regex to match
-`reactions`: an array of arrays. the bot will choose at random one of the outer array's elements, and then add all reactions in that inner array.
+- `pattern`: the regex to match
+- `reactions`: an array of arrays. the bot will choose at random one of the outer array's elements, and then add all reactions in that inner array.
 
 Example config:
 ```
@@ -39,10 +39,10 @@ Example config:
 ### respondToUserInChannel
 Responds to any message posted by the given user in the given channel.
 
-`channelMatch`: the channel to monitor
-`userMatch`: the user to respond to
-`response`: the response
-`perchance`: the percent chance that this triggers
+- `channelMatch`: the channel to monitor
+- `userMatch`: the user to respond to
+- `response`: the response
+- `perchance`: the percent chance that this triggers
 
 Example config: 
 ```
@@ -57,8 +57,8 @@ Example config:
 ### kickOnJoin
 Kicks someone as soon as they join a given channel
 
-`userMatch`: the user to kick
-`channelMatch`: the channel to kick them from
+- `userMatch`: the user to kick
+- `channelMatch`: the channel to kick them from
 
 Example config:
 ```
