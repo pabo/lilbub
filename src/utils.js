@@ -23,7 +23,6 @@ const members = {
     jesse: "U012N9HN1EZ",
     josh: "U01GR9QKNAY",
     kevin: "U013736LETS",
-    lilbub: "U03TSKB0MJR",
     narendra: "U012LRFBZMY",
     plaster: "U01220V5U0P",
     prabu: "U012M48M3JP",
@@ -31,7 +30,10 @@ const members = {
     tom: "U013DD9RP6C",
     wlee: "U01GU4R8YMS",
     vitaliy: "U02PK4NVDQC",
-    //Slackbot: "USLACKBOT",
+
+    lilbub: "U03TSKB0MJR",
+    slackbot: "USLACKBOT",
+    
     //Polly: "U013AMN9TGQ",
     //undefined: "U018D3454BF",
     //undefined: "U01GCCUF3KQ",
@@ -54,6 +56,7 @@ const channels = {
     "lil-bub-dev": "C03TVR0JDC3",
     "chan-gets-a-job": "C03RTAMR2L",
     "job-shit": "C01A8CC9E92",
+    "test-brett": "C02HR1NR4H2",
     "all": "ALL_CHANNELS"
 }
 

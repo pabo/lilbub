@@ -1,7 +1,7 @@
 const { App } = require("@slack/bolt");
 const { initSpellmoji, addWordAsReactions } = require("./spellmoji");
 const initThanos = require("./thanos");
-const { dieRoll, channels } = require("./utils");
+const { dieRoll, channels, members } = require("./utils");
 const {
   reactionsByPattern,
   respondToPattern,
@@ -9,9 +9,10 @@ const {
   kickOnJoin,
 } = require("./config");
 
-const DEFAULT_COOLDOWN_SECONDS = 300;
+const DEFAULT_COOLDOWN_SECONDS = 600; // 10 minutes
+const SHORT_MESSAGE_THRESHHOLD =   5; // 5 characters or less
+
 const responseOnCooldownUntil = new Map();
-const SHORT_MESSAGE_THRESHHOLD = 5;
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -38,8 +39,9 @@ for (const entry of respondToPattern) {
     response,
     perchance,
     cooldown = DEFAULT_COOLDOWN_SECONDS,
+    quoteMatchedPortion,
   } = entry;
-  app.message(pattern, async ({ message, say }) => {
+  app.message(pattern, async ({message, say, context}) => {
     const onCDUntil = responseOnCooldownUntil.get(pattern);
     if (onCDUntil) {
       console.log(`reponse to pattern ${pattern} is on CD until: ${onCDUntil}`);
@@ -48,9 +50,47 @@ for (const entry of respondToPattern) {
     if (dieRoll(perchance) && (!onCDUntil || Date.now() >= onCDUntil)) {
       responseOnCooldownUntil.set(
         pattern,
+            
         new Date(Date.now() + cooldown * 1000)
       );
-      say(response);
+
+      let text = '';
+      if (quoteMatchedPortion) {
+        text = `> ${context.matches[0]}\n`;
+      } 
+
+      text = `${text}${response}`;
+
+      const payload = {
+        text: response,
+        blocks: [{
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text
+          },
+        },
+        {
+          type: "context",
+          elements: [
+            {
+              type: "mrkdwn",
+              // text: `This response is on cooldown for ${cooldown} seconds. So don't try to spam it <@${members.alex}>.`
+              text: `This response is on cooldown for ${cooldown} seconds. So don't try to spam it (Alex!)`
+            }
+          ]
+        }
+      ]
+      };
+
+      // use the existence of `thread_ts` to determine if this message was
+      // in a thread. But if it is, use the `ts` as the `thread_ts` (unsure exactly why)
+      // ref: https://github.com/slackapi/bolt-js/issues/559
+      if (message.thread_ts) {
+        payload.thread_ts = message.ts;
+      }
+
+      say(payload);
     }
   });
 }

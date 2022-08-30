@@ -3,13 +3,13 @@ const { members, channels } = require("./utils");
 // NOTE: cooldown is always in effect, even if left undefined.
 const respondToPattern = [
   {
-    pattern: /ur[au]gu?ay/i,
+    pattern: /\bur[au]gu?ay\b/i,
     response: "no, you're a gay",
     perchance: 100,
     cooldown: undefined, // if undefined, default will be used. but can also specify a cooldown per response
   },
   {
-    pattern: /paragu?ay/i,
+    pattern: /\bparagu?ay\b/i,
     response: "no, you're a pair of gays",
     perchance: 100,
   },
@@ -29,8 +29,37 @@ const respondToPattern = [
     response: "what do you mean `you people`",
     perchance: 100,
   },
+  {
+    pattern: /\bsurf/i,
+    response: "o of t of OO E or ooOO OO ah",
+    perchance: 100,
+  },
+  {
+    pattern: /\blalo\b/i,
+    response: "https://gfycat.com/peskygreenbufflehead",
+    perchance: 100,
+  },
+  {
+    pattern: /\bi.[aeiou]a\b/gi,
+    response: "I hear they make good meatballs",
+    perchance: 100,
+    cooldown: 3600,
+    quoteMatchedPortion: true
+  },
+  {
+    pattern: /\bwelcome\b/i,
+    response: "https://giphy.com/gifs/party-FOfe8iGdAiODS",
+    perchance: 100,
+  },
+  {
+    pattern: /\blil ?bub\b/i,
+    response: "Get my bot's name out yo fuckin' mouth",
+    perchance: 100,
+    cooldown: 3600
+  },
 ];
 
+// remember these have no cooldown, so set the perchance accordingly.
 const respondToUserInChannel = [
   {
     channelMatch: channels["chan-gets-a-job"],
@@ -40,9 +69,15 @@ const respondToUserInChannel = [
   },
   {
     channelMatch: channels.all,
+    userMatch: members.slackbot,
+    response: "Shut the fuck up Slackbot",
+    perchance: 40,
+  },
+  {
+    channelMatch: channels.all,
     userMatch: members.jed,
     response: "just saw this",
-    perchance: 2,
+    perchance: 5,
   },
   {
     channelMatch: channels["tv-and-movies-no-hanams-allowed"],
@@ -52,6 +87,7 @@ const respondToUserInChannel = [
   },
 ];
 
+// reactions is an array of arrays. the bot will choose one of the outer array elements at random, and then add all reactions in that inner array
 const reactionsByPattern = [
   {
     pattern: /\b(gay|chris)\b/i,
