@@ -1,22 +1,80 @@
-Bolt app template
-=================
+# Lil Bub
+[Lil Bub](https://en.wikipedia.org/wiki/Lil_Bub) is a slack bot built off the [Bolt framework](https://slack.dev/bolt-js/). It is basically a slackbot replacement with more configurability.
 
-[Bolt](https://slack.dev/bolt) is our framework that lets you build JavaScript-based Slack apps in a flash.
+## Slackbot-like Features
+### respondToPattern
+Responds to a message that matches the given regex.
 
-This project is a simple app template to make it easy to create your first Bolt app. Read our [Getting Started with Bolt](https://api.slack.com/start/building/bolt) guide for a more in-depth tutorial
+`pattern`: the regex to match
+`reponse`: the response
+`perchance`: percent chance of bot responding when the pattern is matched. 
+`cooldown`: number of seconds to disable this response after responding
+`quoteMatchedPortion`: whether to include the matched portion in the response
 
-Your Project
-------------
+Example config:
+```
+{
+    pattern: /\bi.[aeiou]a\b/gi,
+    response: "I hear they make good meatballs",
+    perchance: 100,
+    cooldown: 3600,
+    quoteMatchedPortion: true
+},
+```
 
-- `app.js` contains the primary Bolt app. It imports the Bolt package (`@slack/bolt`) and starts the Bolt app's server. It's where you'll add your app's listeners.
-- `.env` is where you'll put your Slack app's authorization token and signing secret.
-- The `examples/` folder contains a couple of other sample apps that you can peruse to your liking. They show off a few platform features that your app may want to use.
+### reactionsByPattern
+Reacts to a message that matches the given regex.
 
+`pattern`: the regex to match
+`reactions`: an array of arrays. the bot will choose at random one of the outer array's elements, and then add all reactions in that inner array.
 
-Read the [Getting Started guide](https://api.slack.com/start/building/bolt)
--------------------
+Example config:
+```
+  {
+    pattern: /\bquote\b/i,
+    reactions: [["airquotes", "airquotes-left"]],
+  },
+```
 
-Read the [Bolt documentation](https://slack.dev/bolt)
--------------------
+### respondToUserInChannel
+Responds to any message posted by the given user in the given channel.
 
-\ ゜o゜)ノ
+`channelMatch`: the channel to monitor
+`userMatch`: the user to respond to
+`response`: the response
+`perchance`: the percent chance that this triggers
+
+Example config: 
+```
+  {
+    channelMatch: channels.all,
+    userMatch: members.jed,
+    response: "just saw this",
+    perchance: 5,
+  },
+```
+
+### kickOnJoin
+Kicks someone as soon as they join a given channel
+
+`userMatch`: the user to kick
+`channelMatch`: the channel to kick them from
+
+Example config:
+```
+  {
+    userMatch: members.brett,
+    channelMatch: channels["testing-new-channel"],
+  },
+```
+
+### kickOnMention
+Not actually implemented.... yet.
+
+## Other Features
+
+### Thanos
+Whenever anyone says the key phrase `Thanos did nothing wrong`, initiate a countdown to a snap. During the countdown, users can vote whether they want the snap to succeed. If, at the end of the countdown, the snap succeeds, then every user in the channel has a 50% chance of being kicked from the channel.
+
+### Spellmoji
+A command available in each message's triple dot menu, spellmoji will react to the message with reactions that spell out a given word or phrase.
