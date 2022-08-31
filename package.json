@@ -4,7 +4,8 @@
   "description": "A basic template to spin up a Bolt app for Slack",
   "main": "src/app.js",
   "scripts": {
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "fix": "npx prettier -w . && npx eslint --fix ."
   },
   "dependencies": {
     "@slack/bolt": "^3.12.0",
