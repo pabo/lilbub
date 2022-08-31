@@ -1,7 +1,7 @@
 const { App } = require("@slack/bolt");
 const { initSpellmoji, addWordAsReactions } = require("./spellmoji");
 const initThanos = require("./thanos");
-const { dieRoll, channels, members } = require("./utils");
+const { dieRoll, channels } = require("./utils");
 const {
   reactionsByPattern,
   respondToPattern,

@@ -49,15 +49,6 @@ module.exports = (app) => {
     return quote;
   };
 
-  const getPleaText = () => {
-    const snapSucceeding = voteCount >= votesRequired;
-
-    return "";
-    // return snapSucceeding
-    // ? "Hope no one changes their minds..."
-    // : ""
-  };
-
   const getDownvoteStatusText = () => {
     const snapSucceeding = voteCount >= votesRequired;
 
@@ -188,7 +179,7 @@ module.exports = (app) => {
 
             const snappedMembers = (membersResult.members || []).filter((m) => {
               // dont kick lilbub
-              if (user === members.lilbub) {
+              if (m === members.lilbub) {
                 return false;
               }
 
@@ -274,7 +265,7 @@ module.exports = (app) => {
     }
   });
 
-  app.event("reaction_added", async ({ event, client, context }) => {
+  app.event("reaction_added", async ({ event, client }) => {
     const { item, reaction, user } = event;
     const { ts, channel } = item;
 
@@ -297,7 +288,7 @@ module.exports = (app) => {
     }
   });
 
-  app.event("reaction_removed", async ({ event, client, context }) => {
+  app.event("reaction_removed", async ({ event, client }) => {
     const { item, reaction, user } = event;
     const { ts, channel } = item;
 
