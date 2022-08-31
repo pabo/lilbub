@@ -1,15 +1,14 @@
 {
-  "name": "bolt-app-template",
-  "version": "0.0.1",
-  "description": "A basic template to spin up a Bolt app for Slack",
+  "name": "lil-bub",
+  "version": "1.2.0",
+  "description": "A slightly deformed but beloved slack bot",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "fix": "npx prettier -w . && npx eslint --fix ."
   },
   "dependencies": {
-    "@slack/bolt": "^3.12.0",
-    "prettier": "^2.7.1"
+    "@slack/bolt": "^3.12.0"
   },
   "engines": {
     "node": "11.x"
@@ -19,11 +18,11 @@
   },
   "license": "MIT",
   "keywords": [
-    "node",
-    "glitch",
-    "express"
+    "lilbub",
+    "slackbot"
   ],
   "devDependencies": {
-    "eslint": "^8.23.0"
+    "eslint": "^8.23.0",
+    "prettier": "^2.7.1"
   }
 }
