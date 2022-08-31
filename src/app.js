@@ -1,4 +1,5 @@
 import bolt from "@slack/bolt";
+import {version} from './package.json';
 import { initSpellmoji, addWordAsReactions } from "./spellmoji.js";
 import initThanos from "./thanos.js";
 import { dieRoll, channels } from "./utils.js";
@@ -171,5 +172,5 @@ app.event("message", async ({ event, client }) => {
   // Start your app
   await app.start(process.env.PORT || 8124);
 
-  console.log("⚡️ Bolt app is running! v1.2");
+  console.log(`⚡️ Bolt app is running! ${version}`);
 })();
