@@ -44,7 +44,7 @@ const respondToPattern = [
     response: "I hear they make good meatballs",
     perchance: 100,
     cooldown: 3600,
-    quoteMatchedPortion: true
+    quoteMatchedPortion: true,
   },
   {
     pattern: /\bwelcome\b/i,
@@ -55,7 +55,7 @@ const respondToPattern = [
     pattern: /\blil ?bub\b/i,
     response: "Get my bot's name out yo fuckin' mouth",
     perchance: 100,
-    cooldown: 3600
+    cooldown: 3600,
   },
 ];
 

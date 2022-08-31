@@ -20,7 +20,10 @@ module.exports = (app) => {
   let countdownMinutesRemaining = COUNTDOWN_IN_MINUTES;
 
   try {
-    votesRequired = parseInt(fs.readFileSync(`${__dirname}/../votesRequired.txt`, "utf8"), 10);
+    votesRequired = parseInt(
+      fs.readFileSync(`${__dirname}/../votesRequired.txt`, "utf8"),
+      10
+    );
     console.log(`next snap requires ${votesRequired - 1} votes`);
   } catch (err) {
     console.error(err);
@@ -132,10 +135,13 @@ module.exports = (app) => {
       quoteCounter = 0;
 
       // every time we snap, it takes one less upvote to stop it
-      votesRequired = Math.max(votesRequired-1, MINIMUM_VOTES_REQUIRED);
+      votesRequired = Math.max(votesRequired - 1, MINIMUM_VOTES_REQUIRED);
 
       try {
-        fs.writeFileSync(`${__dirname}/../votesRequired.txt`, `${votesRequired}`);
+        fs.writeFileSync(
+          `${__dirname}/../votesRequired.txt`,
+          `${votesRequired}`
+        );
         // file written successfully
       } catch (err) {
         console.error(err);
