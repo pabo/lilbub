@@ -1,10 +1,16 @@
 import bolt from "@slack/bolt";
-import {version} from './package.json';
+import packageJson from "../package.json" assert { type: "json" };
 import { initSpellmoji, addWordAsReactions } from "./spellmoji.js";
 import initThanos from "./thanos.js";
-import { dieRoll, channels } from "./utils.js";
-import { reactionsByPattern, respondToPattern, respondToUserInChannel, kickOnJoin } from "./config.js";
+import { dieRoll, channels, durationDisplayFromSeconds } from "./utils.js";
+import {
+  reactionsByPattern,
+  respondToPattern,
+  respondToUserInChannel,
+  kickOnJoin,
+} from "./config.js";
 
+const ONE_SECOND_IN_MS = 1000;
 const DEFAULT_COOLDOWN_SECONDS = 600; // 10 minutes
 const SHORT_MESSAGE_THRESHHOLD = 5; // 5 characters or less
 
@@ -47,38 +53,49 @@ for (const entry of respondToPattern) {
       responseOnCooldownUntil.set(
         pattern,
 
-        new Date(Date.now() + cooldown * 1000)
+        new Date(Date.now() + cooldown * ONE_SECOND_IN_MS)
       );
 
-      let text = "";
+      let quoteText = "";
       if (quoteMatchedPortion) {
-        text = `> ${context.matches[0]}\n`;
+        quoteText = `> ${context.matches[0]}\n`;
       }
 
-      text = `${text}${response}`;
-
-      const payload = {
-        text: response,
-        blocks: [
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text,
-            },
-          },
-          {
-            type: "context",
-            elements: [
-              {
+      const getPayload = ({ quoteText, response, cooldown }) => {
+        const payload = {
+          text: `${quoteText}${response}`,
+          blocks: [
+            {
+              type: "section",
+              text: {
                 type: "mrkdwn",
-                // text: `This response is on cooldown for ${cooldown} seconds. So don't try to spam it <@${members.alex}>.`
-                text: `This response is on cooldown for ${cooldown} seconds. So don't try to spam it (Alex!)`,
+                text: `${quoteText}${response}`,
               },
-            ],
-          },
-        ],
+            },
+         ],
+        };
+
+        if (cooldown > 0) {
+          payload.blocks.push(
+            {
+              type: "context",
+              elements: [
+                {
+                  type: "mrkdwn",
+                  // text: `This response is on cooldown for ${cooldown} seconds. So don't try to spam it <@${members.alex}>.`
+                  text: `This response is on cooldown for ${durationDisplayFromSeconds(
+                    cooldown
+                  )} seconds. So don't try to spam it (Alex!)`,
+                },
+              ],
+            });
+        }
+ 
+        return payload;
       };
+
+      const payload = getPayload({ quoteText, response, cooldown });
+      let cooldownRemaining = cooldown;
 
       // use the existence of `thread_ts` to determine if this message was
       // in a thread. But if it is, use the `ts` as the `thread_ts` (unsure exactly why)
@@ -87,7 +104,21 @@ for (const entry of respondToPattern) {
         payload.thread_ts = message.ts;
       }
 
-      say(payload);
+      const { ts, channel } = await say(payload);
+
+      const handler = setInterval(() => {
+        cooldownRemaining -= 1;
+
+        app.client.chat.update({
+          channel,
+          ts,
+          ...getPayload({ quoteText, response, cooldown: cooldownRemaining }),
+        });
+      }, ONE_SECOND_IN_MS);
+
+      setTimeout(() => {
+        clearInterval(handler);
+      }, (1+cooldown) * ONE_SECOND_IN_MS);
     }
   });
 }
@@ -172,5 +203,5 @@ app.event("message", async ({ event, client }) => {
   // Start your app
   await app.start(process.env.PORT || 8124);
 
-  console.log(`⚡️ Bolt app is running! ${version}`);
+  console.log(`⚡️ Bolt app is running! ${packageJson.version}`);
 })();

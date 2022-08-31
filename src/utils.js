@@ -1,3 +1,21 @@
+const pad = (number) => {
+  return number < 10 ? `0${number}` : number
+}
+
+export const durationDisplayFromSeconds = (s) => {
+  const fractionalHours = s/3600;
+
+  const hours = Math.floor(fractionalHours);
+
+  const fractionalMinutes = (fractionalHours - hours) * 60;
+  
+  const minutes = Math.floor(fractionalMinutes);
+
+  const seconds = Math.floor((fractionalMinutes - minutes) * 60);
+
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
 export const dieRoll = (chance) => {
   const d100roll = Math.random() * 100;
   console.log(`dieRoll ${d100roll} <= ${chance}`);

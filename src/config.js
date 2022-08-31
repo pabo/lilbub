@@ -43,7 +43,7 @@ export const respondToPattern = [
     pattern: /\bi.[aeiou]a\b/gi,
     response: "I hear they make good meatballs",
     perchance: 100,
-    cooldown: 3600,
+    cooldown: 1800,
     quoteMatchedPortion: true,
   },
   {
