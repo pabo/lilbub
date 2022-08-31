@@ -82,10 +82,9 @@ for (const entry of respondToPattern) {
               elements: [
                 {
                   type: "mrkdwn",
-                  // text: `This response is on cooldown for ${cooldown} seconds. So don't try to spam it <@${members.alex}>.`
                   text: `This response is on cooldown for ${durationDisplayFromSeconds(
                     cooldown
-                  )} seconds. So don't try to spam it (Alex!)`,
+                  )}. So don't try to spam it (Alex!)`,
                 },
               ],
             });
