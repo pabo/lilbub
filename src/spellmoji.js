@@ -1,4 +1,4 @@
-const addWordAsReactions = async ({ client, word, channel, timestamp }) => {
+export const addWordAsReactions = async ({ client, word, channel, timestamp }) => {
   try {
     const {
       message: { reactions = [] },
@@ -50,7 +50,7 @@ const addWordAsReactions = async ({ client, word, channel, timestamp }) => {
   }
 };
 
-const initSpellmoji = (app) => {
+export const initSpellmoji = (app) => {
   app.view("view_spellmoji", async ({ ack, view, client }) => {
     await ack();
 
@@ -121,9 +121,4 @@ const initSpellmoji = (app) => {
       logger.error(error);
     }
   });
-};
-
-module.exports = {
-  initSpellmoji,
-  addWordAsReactions,
 };

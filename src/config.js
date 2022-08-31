@@ -1,7 +1,7 @@
-const { members, channels } = require("./utils");
+import { members, channels } from "./utils.js";
 
 // NOTE: cooldown is always in effect, even if left undefined.
-const respondToPattern = [
+export const respondToPattern = [
   {
     pattern: /\bur[au]gu?ay\b/i,
     response: "no, you're a gay",
@@ -60,7 +60,7 @@ const respondToPattern = [
 ];
 
 // remember these have no cooldown, so set the perchance accordingly.
-const respondToUserInChannel = [
+export const respondToUserInChannel = [
   {
     channelMatch: channels["chan-gets-a-job"],
     userMatch: members.chan,
@@ -88,7 +88,7 @@ const respondToUserInChannel = [
 ];
 
 // reactions is an array of arrays. the bot will choose one of the outer array elements at random, and then add all reactions in that inner array
-const reactionsByPattern = [
+export const reactionsByPattern = [
   {
     pattern: /\b(gay|chris)\b/i,
     reactions: [
@@ -114,13 +114,13 @@ const reactionsByPattern = [
 ];
 
 // not implemented lol
-const kickOnMention = [
+export const kickOnMention = [
   {
     pattern: /\bsoup\b/i,
   },
 ];
 
-const kickOnJoin = [
+export const kickOnJoin = [
   {
     userMatch: members.hanam,
     channelMatch: channels["tv-and-movies-no-hanams-allowed"],
@@ -130,11 +130,3 @@ const kickOnJoin = [
     channelMatch: channels["testing-new-channel"],
   },
 ];
-
-module.exports = {
-  reactionsByPattern,
-  respondToPattern,
-  respondToUserInChannel,
-  kickOnJoin,
-  kickOnMention,
-};

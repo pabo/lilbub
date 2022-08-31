@@ -1,10 +1,10 @@
-const dieRoll = (chance) => {
+export const dieRoll = (chance) => {
   const d100roll = Math.random() * 100;
   console.log(`dieRoll ${d100roll} <= ${chance}`);
   return d100roll <= chance;
 };
 
-const members = {
+export const members = {
   alex: "U012A4QRQTG",
   ben: "U0132AY2BCH",
   blaine: "U012PTDR7PD",
@@ -45,12 +45,12 @@ const members = {
   //Lil Bub: "U03TSKB0MJR",
 };
 
-const membersById = {};
+export const membersById = {};
 Object.entries(members).forEach(([name, id]) => {
   membersById[id] = name;
 });
 
-const channels = {
+export const channels = {
   "testing-new-channel": "C03TPEWN2MC",
   "tv-and-movies-no-hanams-allowed": "C03TS27AN2H",
   "lil-bub-dev": "C03TVR0JDC3",
@@ -58,11 +58,4 @@ const channels = {
   "job-shit": "C01A8CC9E92",
   "test-brett": "C02HR1NR4H2",
   all: "ALL_CHANNELS",
-};
-
-module.exports = {
-  dieRoll,
-  members,
-  membersById,
-  channels,
 };

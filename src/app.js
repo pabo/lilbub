@@ -1,20 +1,15 @@
-const { App } = require("@slack/bolt");
-const { initSpellmoji, addWordAsReactions } = require("./spellmoji");
-const initThanos = require("./thanos");
-const { dieRoll, channels } = require("./utils");
-const {
-  reactionsByPattern,
-  respondToPattern,
-  respondToUserInChannel,
-  kickOnJoin,
-} = require("./config");
+import bolt from "@slack/bolt";
+import { initSpellmoji, addWordAsReactions } from "./spellmoji.js";
+import initThanos from "./thanos.js";
+import { dieRoll, channels } from "./utils.js";
+import { reactionsByPattern, respondToPattern, respondToUserInChannel, kickOnJoin } from "./config.js";
 
 const DEFAULT_COOLDOWN_SECONDS = 600; // 10 minutes
 const SHORT_MESSAGE_THRESHHOLD = 5; // 5 characters or less
 
 const responseOnCooldownUntil = new Map();
 
-const app = new App({
+const app = new bolt.App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
 });

@@ -1,5 +1,9 @@
-const fs = require("fs");
-const { membersById, members } = require("./utils");
+import fs from "fs";
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { membersById, members } from "./utils.js";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const COUNTDOWN_IN_MINUTES = 5;
 const ONE_MINUTE_IN_MS = 60000;
@@ -11,7 +15,7 @@ const MINIMUM_VOTES_REQUIRED = 4;
 // TODO: more counting down
 // TODO: early exit on success?
 
-module.exports = (app) => {
+export default (app) => {
   let snapMessageTs = null;
   let votesRequired = 10;
   let voteCount = 0;
