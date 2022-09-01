@@ -1,3 +1,8 @@
+
+export const getRandomItemFromArray = (array) => {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
 const pad = (number) => {
   return number < 10 ? `0${number}` : number
 }
@@ -64,6 +69,7 @@ export const members = {
 };
 
 export const membersById = {};
+
 Object.entries(members).forEach(([name, id]) => {
   membersById[id] = name;
 });

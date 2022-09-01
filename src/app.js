@@ -2,7 +2,8 @@ import bolt from "@slack/bolt";
 import packageJson from "../package.json" assert { type: "json" };
 import { initSpellmoji, addWordAsReactions } from "./spellmoji.js";
 import initThanos from "./thanos.js";
-import { dieRoll, channels, durationDisplayFromSeconds } from "./utils.js";
+import { initReactionQuiz } from "./reactionQuiz.js";
+import { dieRoll, channels, durationDisplayFromSeconds, getRandomItemFromArray } from "./utils.js";
 import {
   reactionsByPattern,
   respondToPattern,
@@ -16,6 +17,7 @@ const SHORT_MESSAGE_THRESHHOLD = 5; // 5 characters or less
 
 const responseOnCooldownUntil = new Map();
 
+console.log("process.env", process.env)
 const app = new bolt.App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -33,6 +35,7 @@ const app = new bolt.App({
 
 initSpellmoji(app);
 initThanos(app);
+initReactionQuiz(app);
 
 // Respond to a message that matches a given pattern
 for (const entry of respondToPattern) {
@@ -168,8 +171,7 @@ app.event("message", async ({ event, client }) => {
     const { pattern, reactions } = entry;
 
     if (text && text.match(pattern)) {
-      const reactionsToAdd =
-        reactions[Math.floor(Math.random() * reactions.length)];
+      const reactionsToAdd = getRandomItemFromArray(reactions);
 
       for (const name of reactionsToAdd) {
         await client.reactions.add({
