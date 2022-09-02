@@ -154,7 +154,11 @@ app.event("channel_created", async ({ event, client }) => {
 });
 
 app.event("message", async ({ event, client }) => {
-  const { text, ts: timestamp, channel, user } = event;
+  const { text, ts: timestamp, channel, user, type, subtype, message } = event;
+
+  // could detect subtype==="message_changed" instead...
+  const textOfMessageOrUpdate = message?.text ?? text ?? "";
+  const tsOfMessageOrUpdate = message?.ts ?? timestamp;
 
   // addWordAsReaction to short messages
   if (text && text.length <= SHORT_MESSAGE_THRESHHOLD && dieRoll(10)) {
@@ -170,13 +174,13 @@ app.event("message", async ({ event, client }) => {
   for (const entry of reactionsByPattern) {
     const { pattern, reactions } = entry;
 
-    if (text && text.match(pattern)) {
+    if (textOfMessageOrUpdate && textOfMessageOrUpdate.match(pattern)) {
       const reactionsToAdd = getRandomItemFromArray(reactions);
 
       for (const name of reactionsToAdd) {
         await client.reactions.add({
           name,
-          timestamp,
+          timestamp: tsOfMessageOrUpdate,
           channel,
         });
       }
