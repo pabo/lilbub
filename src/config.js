@@ -60,6 +60,12 @@ export const respondToPattern = [
 ];
 
 // remember these have no cooldown, so set the perchance accordingly.
+// TODO: add cooldowns
+// TODO: fix threaded replies
+// NOTE: this is a thing: (it's the "also send to channel" checkbox)
+//       type message
+//       subtype thread_broadcast
+
 export const respondToUserInChannel = [
   {
     channelMatch: channels["chan-gets-a-job"],
@@ -77,7 +83,7 @@ export const respondToUserInChannel = [
     channelMatch: channels.all,
     userMatch: members.jed,
     response: "just saw this",
-    perchance: 5,
+    perchance: .5,
   },
   {
     channelMatch: channels["tv-and-movies-no-hanams-allowed"],
