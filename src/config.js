@@ -121,6 +121,10 @@ export const reactionsByPattern = [
     pattern: /^\.$/i,
     reactions: [["shifty"], ["shifty_eyes"]],
   },
+  {
+    pattern: /\boh+ (yeah*|no+)\b/i,
+    reactions: [["oh-yea"]],
+  },
 ];
 
 // not implemented lol
