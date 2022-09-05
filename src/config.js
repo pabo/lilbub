@@ -111,6 +111,10 @@ export const reactionsByPattern = [
     pattern: /\bquote\b/i,
     reactions: [["airquotes", "airquotes-left"]],
   },
+  {
+    pattern: /\boh+ (yeah*|no+)\b/i,
+    reactions: [["oh-yea"]],
+  },
 ];
 
 // not implemented lol
