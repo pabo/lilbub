@@ -22,7 +22,7 @@ export const respondToPattern = [
     pattern: /\bdamn?\b/i,
     response:
       "https://i.kym-cdn.com/photos/images/newsfeed/000/971/686/891.jpg",
-    perchance: 100,
+    perchance: 10,
   },
   {
     pattern: /\byou people\b/i,
