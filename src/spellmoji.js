@@ -33,7 +33,7 @@ export const addWordAsReactions = async ({ client, word, channel, timestamp }) =
 
         return null;
       } else if (character.match(/[0-9]/)) {
-        let numberAttempt = numbers[character]
+        let numberAttempt = numbers[character];
         if (!existingReactions.includes(numberAttempt)) {
           existingReactions.push(numberAttempt);
           return numberAttempt;
