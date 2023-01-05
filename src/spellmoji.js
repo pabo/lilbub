@@ -12,6 +12,9 @@ export const addWordAsReactions = async ({ client, word, channel, timestamp }) =
     const existingReactions = reactions.map((r) => r.name);
 
     const emojis = word.split("").map((character) => {
+      /**
+       * Alphabet
+       */
       if (character.match(/[a-zA-Z]/)) {
         let attempt = character;
         if (!existingReactions.includes(attempt)) {
@@ -31,16 +34,57 @@ export const addWordAsReactions = async ({ client, word, channel, timestamp }) =
           return attempt;
         }
 
-        return null;
+      /**
+       * Numbers
+       */
       } else if (character.match(/[0-9]/)) {
         let numberAttempt = numbers[character];
         if (!existingReactions.includes(numberAttempt)) {
           existingReactions.push(numberAttempt);
           return numberAttempt;
         }
+      
+      /**
+       * Punctuations
+       */
+      } else if (character.match(/\?/)) {
+        if (!existingReactions.includes('question')) {
+          existingReactions.push('question');
+          return 'question';
+        }
+      } else if (character.match(/\!/)) {
+        if (!existingReactions.includes('exclamation')) {
+          existingReactions.push('exclamation');
+          return 'exclamation';
+        }
+      } else if (character.match(/#/)) {
+        if (!existingReactions.includes('hash')) {
+          existingReactions.push('hash');
+          return 'hash';
+        }
+      } else if (character.match(/\+/)) {
+        if (!existingReactions.includes('heavy_plus_sign')) {
+          existingReactions.push('heavy_plus_sign');
+          return 'heavy_plus_sign';
+        }
+      } else if (character.match(/=/)) {
+        if (!existingReactions.includes('heavy_equals_sign')) {
+          existingReactions.push('heavy_equals_sign');
+          return 'heavy_equals_sign';
+        }
+      } else if (character.match(/["']/)) {
+        if (!existingReactions.includes('airquotes')) {
+          existingReactions.push('airquotes');
+          return 'airquotes';
+        }
 
-        return null;
+        if (!existingReactions.includes('airquotes-left')) {
+          existingReactions.push('airquotes-left');
+          return 'airquotes-left';
+        }
       }
+
+      return null;
     });
 
     for (const emoji of emojis) {
