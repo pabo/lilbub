@@ -1,3 +1,5 @@
+const numbers = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+
 export const addWordAsReactions = async ({ client, word, channel, timestamp }) => {
   try {
     const {
@@ -27,6 +29,14 @@ export const addWordAsReactions = async ({ client, word, channel, timestamp }) =
         if (!existingReactions.includes(attempt)) {
           existingReactions.push(attempt);
           return attempt;
+        }
+
+        return null;
+      } else if (character.match(/[0-9]/)) {
+        let numberAttempt = numbers[character]
+        if (!existingReactions.includes(numberAttempt)) {
+          existingReactions.push(numberAttempt);
+          return numberAttempt;
         }
 
         return null;
