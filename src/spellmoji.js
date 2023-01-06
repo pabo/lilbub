@@ -1,6 +1,41 @@
-const numbers = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+const numbers = [
+  "zero",
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+];
 
-export const addWordAsReactions = async ({ client, word, channel, timestamp }) => {
+const otherCharacterMap = {
+  "?": [
+    "alphabet-yellow-question",
+    "alphabet-white-question",
+    "question",
+    "grey_question",
+  ],
+  "!": [
+    "alphabet-yellow-exclamation",
+    "alphabet-white-exclamation",
+    "exclamation",
+    "grey_exclamation",
+  ],
+  "#": ["hash", "alphabet-yellow-hash", "alphabet-white-hash"],
+  "+": ["heavy_plus_sign"],
+  "=": ["heavy_equals_sign"],
+  '"': ["airquotes", "airquotes-left"],
+};
+
+export const addWordAsReactions = async ({
+  client,
+  word,
+  channel,
+  timestamp,
+}) => {
   try {
     const {
       message: { reactions = [] },
@@ -12,10 +47,10 @@ export const addWordAsReactions = async ({ client, word, channel, timestamp }) =
     const existingReactions = reactions.map((r) => r.name);
 
     const emojis = word.split("").map((character) => {
-      /**
-       * Alphabet
-       */
       if (character.match(/[a-zA-Z]/)) {
+        /**
+         * Alphabet
+         */
         let attempt = character;
         if (!existingReactions.includes(attempt)) {
           existingReactions.push(attempt);
@@ -33,58 +68,34 @@ export const addWordAsReactions = async ({ client, word, channel, timestamp }) =
           existingReactions.push(attempt);
           return attempt;
         }
-
-      /**
-       * Numbers
-       */
       } else if (character.match(/[0-9]/)) {
+        /**
+         * Numbers
+         */
         let numberAttempt = numbers[character];
         if (!existingReactions.includes(numberAttempt)) {
           existingReactions.push(numberAttempt);
           return numberAttempt;
         }
-      
-      /**
-       * Punctuations
-       */
-      } else if (character.match(/\?/)) {
-        if (!existingReactions.includes('question')) {
-          existingReactions.push('question');
-          return 'question';
-        }
-      } else if (character.match(/\!/)) {
-        if (!existingReactions.includes('exclamation')) {
-          existingReactions.push('exclamation');
-          return 'exclamation';
-        }
-      } else if (character.match(/#/)) {
-        if (!existingReactions.includes('hash')) {
-          existingReactions.push('hash');
-          return 'hash';
-        }
-      } else if (character.match(/\+/)) {
-        if (!existingReactions.includes('heavy_plus_sign')) {
-          existingReactions.push('heavy_plus_sign');
-          return 'heavy_plus_sign';
-        }
-      } else if (character.match(/=/)) {
-        if (!existingReactions.includes('heavy_equals_sign')) {
-          existingReactions.push('heavy_equals_sign');
-          return 'heavy_equals_sign';
-        }
-      } else if (character.match(/["']/)) {
-        if (!existingReactions.includes('airquotes')) {
-          existingReactions.push('airquotes');
-          return 'airquotes';
-        }
+      } else {
+        /**
+         * Other
+         */
+        var attempt;
 
-        if (!existingReactions.includes('airquotes-left')) {
-          existingReactions.push('airquotes-left');
-          return 'airquotes-left';
+        for (const [char, emojis] of Object.entries(otherCharacterMap)) {
+          if (character.match(new RegExp(`\\${char}`))) {
+            emojis.some((emoji) => {
+              if (!existingReactions.includes(emoji)) {
+                existingReactions.push(emoji);
+                attempt = emoji;
+                return true;
+              }
+            });
+          }
         }
+        return attempt;
       }
-
-      return null;
     });
 
     for (const emoji of emojis) {
