@@ -3,7 +3,12 @@ import packageJson from "../package.json" assert { type: "json" };
 import { initSpellmoji, addWordAsReactions } from "./spellmoji.js";
 import initThanos from "./thanos.js";
 import { initReactionQuiz } from "./reactionQuiz.js";
-import { dieRoll, channels, durationDisplayFromSeconds, getRandomItemFromArray } from "./utils.js";
+import {
+  dieRoll,
+  channels,
+  durationDisplayFromSeconds,
+  getRandomItemFromArray,
+} from "./utils.js";
 import {
   reactionsByPattern,
   respondToPattern,
@@ -13,11 +18,12 @@ import {
 
 const ONE_SECOND_IN_MS = 1000;
 const DEFAULT_COOLDOWN_SECONDS = 600; // 10 minutes
+const SECONDS_BETWEEN_UPDATES = 10; // 10 seconds
 const SHORT_MESSAGE_THRESHHOLD = 5; // 5 characters or less
 
 const responseOnCooldownUntil = new Map();
 
-console.log("process.env", process.env)
+console.log("process.env", process.env);
 const app = new bolt.App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -75,24 +81,23 @@ for (const entry of respondToPattern) {
                 text: `${quoteText}${response}`,
               },
             },
-         ],
+          ],
         };
 
         if (cooldown > 0) {
-          payload.blocks.push(
-            {
-              type: "context",
-              elements: [
-                {
-                  type: "mrkdwn",
-                  text: `This response is on cooldown for ${durationDisplayFromSeconds(
-                    cooldown
-                  )}. So don't try to spam it (Alex!)`,
-                },
-              ],
-            });
+          payload.blocks.push({
+            type: "context",
+            elements: [
+              {
+                type: "mrkdwn",
+                text: `This response is on cooldown for ${durationDisplayFromSeconds(
+                  cooldown
+                )}. So don't try to spam it (Alex!)`,
+              },
+            ],
+          });
         }
- 
+
         return payload;
       };
 
@@ -111,16 +116,18 @@ for (const entry of respondToPattern) {
       const handler = setInterval(() => {
         cooldownRemaining -= 1;
 
-        app.client.chat.update({
-          channel,
-          ts,
-          ...getPayload({ quoteText, response, cooldown: cooldownRemaining }),
-        });
+        if (cooldownRemaining % SECONDS_BETWEEN_UPDATES === 0) {
+          app.client.chat.update({
+            channel,
+            ts,
+            ...getPayload({ quoteText, response, cooldown: cooldownRemaining }),
+          });
+        }
       }, ONE_SECOND_IN_MS);
 
       setTimeout(() => {
         clearInterval(handler);
-      }, (1+cooldown) * ONE_SECOND_IN_MS);
+      }, (1 + cooldown) * ONE_SECOND_IN_MS);
     }
   });
 }

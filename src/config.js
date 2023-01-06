@@ -42,7 +42,7 @@ export const respondToPattern = [
   {
     pattern: /\bi.[aeiou]a\b/gi,
     response: "I hear they make good meatballs",
-    perchance: 100,
+    perchance: 10,
     cooldown: 1800,
     quoteMatchedPortion: true,
   },
@@ -54,7 +54,7 @@ export const respondToPattern = [
   {
     pattern: /\blil ?bub\b/i,
     response: "Get my bot's name out yo fuckin' mouth",
-    perchance: 100,
+    perchance: 10,
     cooldown: 3600,
   },
 ];
