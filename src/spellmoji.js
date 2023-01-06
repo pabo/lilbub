@@ -1,4 +1,41 @@
-export const addWordAsReactions = async ({ client, word, channel, timestamp }) => {
+const numbers = [
+  "zero",
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+];
+
+const otherCharacterMap = {
+  "?": [
+    "alphabet-yellow-question",
+    "alphabet-white-question",
+    "question",
+    "grey_question",
+  ],
+  "!": [
+    "alphabet-yellow-exclamation",
+    "alphabet-white-exclamation",
+    "exclamation",
+    "grey_exclamation",
+  ],
+  "#": ["hash", "alphabet-yellow-hash", "alphabet-white-hash"],
+  "+": ["heavy_plus_sign"],
+  "=": ["heavy_equals_sign"],
+  '"': ["airquotes", "airquotes-left"],
+};
+
+export const addWordAsReactions = async ({
+  client,
+  word,
+  channel,
+  timestamp,
+}) => {
   try {
     const {
       message: { reactions = [] },
@@ -11,6 +48,9 @@ export const addWordAsReactions = async ({ client, word, channel, timestamp }) =
 
     const emojis = word.split("").map((character) => {
       if (character.match(/[a-zA-Z]/)) {
+        /**
+         * Alphabet
+         */
         let attempt = character;
         if (!existingReactions.includes(attempt)) {
           existingReactions.push(attempt);
@@ -28,8 +68,33 @@ export const addWordAsReactions = async ({ client, word, channel, timestamp }) =
           existingReactions.push(attempt);
           return attempt;
         }
+      } else if (character.match(/[0-9]/)) {
+        /**
+         * Numbers
+         */
+        let numberAttempt = numbers[character];
+        if (!existingReactions.includes(numberAttempt)) {
+          existingReactions.push(numberAttempt);
+          return numberAttempt;
+        }
+      } else {
+        /**
+         * Other
+         */
+        var attempt;
 
-        return null;
+        for (const [char, emojis] of Object.entries(otherCharacterMap)) {
+          if (character.match(new RegExp(`\\${char}`))) {
+            emojis.some((emoji) => {
+              if (!existingReactions.includes(emoji)) {
+                existingReactions.push(emoji);
+                attempt = emoji;
+                return true;
+              }
+            });
+          }
+        }
+        return attempt;
       }
     });
 
