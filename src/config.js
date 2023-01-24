@@ -14,6 +14,11 @@ export const respondToPattern = [
     perchance: 100,
   },
   {
+    pattern: /\bfinna\b/i,
+    response: "trying to*,  idiot",
+    perchance: 100,
+  },
+  {
     pattern: /\bgay\b/i,
     response: "I don't know how to tell my parents that I'm gay",
     perchance: 1,
