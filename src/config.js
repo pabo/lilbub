@@ -3,20 +3,10 @@ import { members, channels } from "./utils.js";
 // NOTE: cooldown is always in effect, even if left undefined.
 export const respondToPattern = [
   {
-    pattern: /\bur[au]gu?ay\b/i,
-    response: "no, you're a gay",
-    perchance: 100,
+    pattern: /\bvape\b/i,
+    response: "we get it, you vape",
+    perchance: 10,
     cooldown: undefined, // if undefined, default will be used. but can also specify a cooldown per response
-  },
-  {
-    pattern: /\bparagu?ay\b/i,
-    response: "no, you're a pair of gays",
-    perchance: 100,
-  },
-  {
-    pattern: /\bgay\b/i,
-    response: "I don't know how to tell my parents that I'm gay",
-    perchance: 1,
   },
   {
     pattern: /\bdamn?\b/i,
@@ -83,7 +73,7 @@ export const respondToUserInChannel = [
     channelMatch: channels.all,
     userMatch: members.jed,
     response: "just saw this",
-    perchance: .5,
+    perchance: 0.5,
   },
   {
     channelMatch: channels["tv-and-movies-no-hanams-allowed"],
@@ -96,14 +86,8 @@ export const respondToUserInChannel = [
 // reactions is an array of arrays. the bot will choose one of the outer array elements at random, and then add all reactions in that inner array
 export const reactionsByPattern = [
   {
-    pattern: /\b(gay|chris)\b/i,
-    reactions: [
-      ["gayseal"],
-      ["le-gay"],
-      ["gaycurious"],
-      ["fabulously-gay"],
-      ["erik_pretty"],
-    ],
+    pattern: /\b(chris)\b/i,
+    reactions: [["giggety"], ["chris"], ["catbug"]],
   },
   {
     pattern: /\bjesse\b/i,
