@@ -9,6 +9,11 @@ export const respondToPattern = [
     cooldown: undefined, // if undefined, default will be used. but can also specify a cooldown per response
   },
   {
+    pattern: /\bfinna\b/i,
+    response: "trying to*,  idiot",
+    perchance: 100,
+  },
+  {
     pattern: /\bdamn?\b/i,
     response:
       "https://i.kym-cdn.com/photos/images/newsfeed/000/971/686/891.jpg",
