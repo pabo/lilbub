@@ -56,7 +56,6 @@ export const respondToPattern = [
 
 // remember these have no cooldown, so set the perchance accordingly.
 // TODO: add cooldowns
-// TODO: fix threaded replies
 // NOTE: this is a thing: (it's the "also send to channel" checkbox)
 //       type message
 //       subtype thread_broadcast
@@ -85,6 +84,12 @@ export const respondToUserInChannel = [
     userMatch: members.hanam,
     response: "What are you even doing in here?",
     perchance: 25,
+  },
+  {
+    channelMatch: channels.all,
+    userMatch: members.changpt,
+    response: "BRO AS AN AI LANGUAGE MODEL YOU FUCKING SUCK",
+    perchance: 10,
   },
 ];
 
