@@ -14,12 +14,6 @@ export const respondToPattern = [
     perchance: 100,
   },
   {
-    pattern: /\bdamn?\b/i,
-    response:
-      "https://i.kym-cdn.com/photos/images/newsfeed/000/971/686/891.jpg",
-    perchance: 10,
-  },
-  {
     pattern: /\byou people\b/i,
     response: "what do you mean `you people`",
     perchance: 100,
