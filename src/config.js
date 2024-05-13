@@ -1,5 +1,28 @@
 import { members, channels } from "./utils.js";
 
+export const kickOnJoin = [
+  {
+    userMatch: members.hanam,
+    channelMatch: channels["tv-and-movies-no-hanams-allowed"],
+  },
+  {
+    userMatch: members.brett,
+    channelMatch: channels["testing-new-channel"],
+  },
+  {
+    userMatch: members.chan,
+    channelMatch: channels["nel"],
+  },
+  {
+    userMatch: members.brett,
+    channelMatch: channels["brett-er-off-without-him"],
+  },
+  {
+    userMatch: members.chris,
+    channelMatch: channels["chriss-less"],
+  },
+];
+
 // NOTE: cooldown is always in effect, even if left undefined.
 export const respondToPattern = [
   {
@@ -10,7 +33,7 @@ export const respondToPattern = [
   },
   {
     pattern: /\bfinna\b/i,
-    response: "trying to*,  idiot",
+    response: "trying to*, idiot",
     perchance: 100,
   },
   {
@@ -37,7 +60,7 @@ export const respondToPattern = [
   {
     pattern: /\bi.[aeiou]a\b/gi,
     response: "I hear they make good meatballs",
-    perchance: 10,
+    perchance: 5,
     cooldown: 1800,
     quoteMatchedPortion: true,
   },
@@ -52,6 +75,12 @@ export const respondToPattern = [
     perchance: 10,
     cooldown: 3600,
   },
+  {
+    pattern: /\bpopover\b/i,
+    response: "more like poop over",
+    perchance: 100,
+    cooldown: 7200,
+  },
 ];
 
 // remember these have no cooldown, so set the perchance accordingly.
@@ -64,31 +93,39 @@ export const respondToUserInChannel = [
   {
     channelMatch: channels["chan-gets-a-job"],
     userMatch: members.chan,
-    response: "get a job",
+    response: ["get a job"],
     perchance: 5,
+  },
+  {
+    channelMatch: channels["brett-gets-a-job"],
+    userMatch: members.brett,
+    response: ["dude, get a job already"],
+    perchance: 10,
   },
   {
     channelMatch: channels.all,
     userMatch: members.slackbot,
-    response: "Shut the fuck up Slackbot",
-    perchance: 40,
+    response: ["Shut the fuck up Slackbot"],
+    perchance: 5,
   },
   {
     channelMatch: channels.all,
     userMatch: members.jed,
-    response: "just saw this",
+    response: ["just saw this"],
     perchance: 0.5,
   },
-  {
-    channelMatch: channels["tv-and-movies-no-hanams-allowed"],
-    userMatch: members.hanam,
-    response: "What are you even doing in here?",
-    perchance: 25,
-  },
+  ...kickOnJoin.map(config => {
+    return {
+      channelMatch: config.channelMatch,
+      userMatch: config.userMatch,
+      response: ["What are you even doing in here?", "He doesn't even GO here!", "Someone call the police!"],
+      perchance: 100,
+    }
+  }),
   {
     channelMatch: channels.all,
     userMatch: members.changpt,
-    response: "BRO AS AN AI LANGUAGE MODEL YOU FUCKING SUCK",
+    response: ["BRO AS AN AI LANGUAGE MODEL YOU FUCKING SUCK"],
     perchance: 10,
   },
 ];
@@ -125,16 +162,5 @@ export const reactionsByPattern = [
 export const kickOnMention = [
   {
     pattern: /\bsoup\b/i,
-  },
-];
-
-export const kickOnJoin = [
-  {
-    userMatch: members.hanam,
-    channelMatch: channels["tv-and-movies-no-hanams-allowed"],
-  },
-  {
-    userMatch: members.brett,
-    channelMatch: channels["testing-new-channel"],
   },
 ];

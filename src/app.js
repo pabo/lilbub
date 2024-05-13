@@ -205,7 +205,7 @@ app.event("message", async ({ event, client }) => {
     ) {
       client.chat.postMessage({
         channel,
-        text: response,
+        text: getRandomItemFromArray(response),
         thread_ts: event.thread_ts,
       });
     }

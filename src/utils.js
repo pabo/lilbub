@@ -75,11 +75,15 @@ Object.entries(members).forEach(([name, id]) => {
 });
 
 export const channels = {
+  "nel": "C0738RYEEGJ",
   "testing-new-channel": "C03TPEWN2MC",
   "tv-and-movies-no-hanams-allowed": "C03TS27AN2H",
   "lil-bub-dev": "C03TVR0JDC3",
   "chan-gets-a-job": "C03RTAMR2L",
+  "brett-gets-a-job": "C05G76WN83Y",
   "job-shit": "C01A8CC9E92",
   "test-brett": "C02HR1NR4H2",
+  "brett-er-off-without-him": "C07362Y1D7X",
+  "chris-less": "C073ML1LLHF",
   all: "ALL_CHANNELS",
 };
