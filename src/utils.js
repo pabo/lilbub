@@ -84,6 +84,6 @@ export const channels = {
   "job-shit": "C01A8CC9E92",
   "test-brett": "C02HR1NR4H2",
   "brett-er-off-without-him": "C07362Y1D7X",
-  "chris-less": "C073ML1LLHF",
+  "chriss-less": "C073ML1LLHF",
   all: "ALL_CHANNELS",
 };
