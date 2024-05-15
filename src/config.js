@@ -2,10 +2,6 @@ import { members, channels } from "./utils.js";
 
 export const kickOnJoin = [
   {
-    userMatch: members.hanam,
-    channelMatch: channels["tv-and-movies-no-hanams-allowed"],
-  },
-  {
     userMatch: members.brett,
     channelMatch: channels["testing-new-channel"],
   },
