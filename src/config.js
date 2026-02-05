@@ -22,6 +22,11 @@ export const kickOnJoin = [
 // NOTE: cooldown is always in effect, even if left undefined.
 export const respondToPattern = [
   {
+    pattern: /\bwake up.*lil buddy\b/i,
+    response: "WHAT YEAR IS IT?!",
+    perchance: 100,
+  },
+  {
     pattern: /\bvape\b/i,
     response: "we get it, you vape",
     perchance: 10,
@@ -50,7 +55,8 @@ export const respondToPattern = [
   },
   {
     pattern: /\blalo\b/i,
-    response: "https://gfycat.com/peskygreenbufflehead",
+    // response: "https://gfycat.com/peskygreenbufflehead",
+    response: "https://giphy.com/gifs/bettercallsaulAMC-better-call-saul-bcs-s5-510-iDyF9dOL6nG4uS2S1z",
     perchance: 100,
   },
   {
@@ -86,17 +92,18 @@ export const respondToPattern = [
 //       subtype thread_broadcast
 
 export const respondToUserInChannel = [
-  {
-    channelMatch: channels["chan-gets-a-job"],
-    userMatch: members.chan,
-    response: ["get a job"],
-    perchance: 5,
-  },
+  // until next time...
+  // {
+  //   channelMatch: channels["chan-gets-a-job"],
+  //   userMatch: members.chan,
+  //   response: ["get a job"],
+  //   perchance: 5,
+  // },
   {
     channelMatch: channels["brett-gets-a-job"],
     userMatch: members.brett,
     response: ["dude, get a job already"],
-    perchance: 10,
+    perchance: 5,
   },
   {
     channelMatch: channels.all,
@@ -114,7 +121,12 @@ export const respondToUserInChannel = [
     return {
       channelMatch: config.channelMatch,
       userMatch: config.userMatch,
-      response: ["What are you even doing in here?", "He doesn't even GO here!", "Someone call the police!"],
+      response: [
+        "What are you even doing in here?",
+        "He doesn't even GO here!",
+        "Someone call the police!",
+        "Bye, Felicia!"
+      ],
       perchance: 100,
     }
   }),

@@ -52,7 +52,11 @@ for (const entry of respondToPattern) {
     cooldown = DEFAULT_COOLDOWN_SECONDS,
     quoteMatchedPortion,
   } = entry;
+
+  console.log("processing respondToPattern", entry)
+
   app.message(pattern, async ({ message, say, context }) => {
+    console.log("message received matching", pattern);
     const onCDUntil = responseOnCooldownUntil.get(pattern);
     if (onCDUntil) {
       console.log(`reponse to pattern ${pattern} is on CD until: ${onCDUntil}`);
